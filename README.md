@@ -308,6 +308,17 @@ Points n 1, 2 and 3 are managed by the [Hasura CLI](https://hasura.io/docs/lates
 
 Point n.4 is slightly more complicated and is usually delegated to the DevOps management realm. Long story short, the full state should be restored to a newly supplied environment. The classic name for such a huge responsibility is **Disaster Recovery**.
 
+🔥 You can run this on your host machine after [installing the Hasura CLI](https://hasura.io/docs/latest/graphql/core/hasura-cli/install-hasura-cli.html):
+
+```bash
+cd services/migrations
+hasura apply migrations
+hasura apply metadata
+hasura apply seeds
+```
+
+🔥 [Or you can use the dockerized state management utilities](#state-management-utilities) 🤟
+
 ### Point & Click Configuration
 
 Hasura.io offers a visual management tool called [Hasura Console](https://hasura.io/docs/latest/graphql/core/hasura-cli/hasura_console.html) that can **synchronize point&click actions with the local codebase** for metadata and migrations.
@@ -316,6 +327,15 @@ Hasura.io offers a visual management tool called [Hasura Console](https://hasura
 2. the resulting State Mutation is recorded as [database migrations](#migrations--state-management) and code-changes in a set of YAML files
 3. the Team can support the change by offering Code Reviews and testing the branch in [dispsable environments](#disposable-environments--gitpodio)
 4. approved changes are automatically distributed to any running environment including the Developer's
+
+> 🔥 You can run this on your host machine after [installing the Hasura CLI](https://hasura.io/docs/latest/graphql/core/hasura-cli/install-hasura-cli.html):
+
+```bash
+cd services/migrations
+hasura console
+```
+
+🔥 [Or you can use the dockerized state management utilities](#state-management-utilities) 🤟
 
 ---
 
