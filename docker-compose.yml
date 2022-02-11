@@ -11,6 +11,53 @@ services:
 
 
   ###
+  ### INFRASTRUCTURE
+  ###
+
+  hasura-engine:
+    build:
+      context: ./services/hasura-engine
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: "${HASURA_ADMIN_SECRET:-hasura}"
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/postgres
+      HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "${HASURA_JWT_SECRET:-h2leOvdgjwpV0As5L8rZlV3VDVOsOmwk}"}'
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+    tty: true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "-", "http://localhost:8080/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    build:
+      context: ./services/postgres
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - .docker-data/pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+
+  ###
   ### UTILITIES
   ###
 
@@ -25,48 +72,52 @@ services:
       - "${ADMINER_PORT:-8008}:8080"
     restart: always
 
-
-  ###
-  ### INFRASTRUCTURE
-  ###
-
-  hasura:
+  hasura-console:
     build:
-      context: ./services/hasura
-      dockerfile: Dockerfile.dev
-    depends_on:
-      postgres:
-        condition: service_healthy
-    ports:
-      - "${HASURA_PORT:-8080}:8080"
-    environment:
-      HASURA_GRAPHQL_DEV_MODE: "true"
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
-      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
-      HASURA_GRAPHQL_ADMIN_SECRET: "${HASURA_ADMIN_SECRET:-hasura}"
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/postgres
-      HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "${HASURA_JWT_SECRET:-h2leOvdgjwpV0As5L8rZlV3VDVOsOmwk}"}'
-    healthcheck:
-      test: ["CMD", "wget", "-qO", "-", "http://localhost:8080/healthz"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    restart: always
-
-  postgres:
-    build:
-      context: ./services/postgres
+      context: ./services/hasura-console
       dockerfile: Dockerfile.dev
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "9693:9693"
+      - "9695:9695"
     volumes:
-      - .docker-data/pg:/var/lib/postgresql/data
+      - ./services/migrations:/usr/src/hasura/app
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 20
-    restart: always
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/postgres
+      HASURA_GRAPHQL_ADMIN_SECRET: "${HASURA_ADMIN_SECRET:-hasura}"
+      HASURA_GRAPHQL_ENDPOINT: http://127.0.0.1:8080
+      HASURA_RUN_CONSOLE: "true"
+    depends_on:
+      hasura-engine:
+        condition: service_healthy
 
+  hasura-migrate:
+    build:
+      context: ./services/hasura-console
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/migrations:/usr/src/hasura/app
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/postgres
+      HASURA_GRAPHQL_ADMIN_SECRET: "${HASURA_ADMIN_SECRET:-hasura}"
+      HASURA_GRAPHQL_ENDPOINT: http://127.0.0.1:8080
+      HASURA_APPLY_MIGRATIONS: "true"
+      HASURA_APPLY_METADATA: "true"
+      HASURA_APPLY_SEEDS: "true"
+    depends_on:
+      hasura-engine:
+        condition: service_healthy
+
+  hasura-export:
+    build:
+      context: ./services/hasura-console
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/migrations:/usr/src/hasura/app
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/postgres
+      HASURA_GRAPHQL_ADMIN_SECRET: "${HASURA_ADMIN_SECRET:-hasura}"
+      HASURA_GRAPHQL_ENDPOINT: http://127.0.0.1:8080
+      HASURA_EXPORT_METADATA: "true"
+    depends_on:
+      hasura-engine:
+        condition: service_healthy

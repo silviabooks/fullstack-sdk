@@ -1,7 +1,7 @@
 
 start:
-	@docker-compose up -d hasura adminer
-	@docker-compose logs -f hasura
+	@docker-compose up -d hasura-migrate adminer
+	@docker-compose logs -f hasura-engine
 
 stop:
 	@docker-compose down
@@ -16,3 +16,14 @@ clean: stop
 
 test:
 	@echo "TODO"
+
+# Hasura Utilities
+
+hasura-console:
+	@docker-compose up -d hasura-console
+
+hasura-migrate:
+	@docker-compose up hasura-migrate
+
+hasura-export-metadata:
+	@docker-compose up hasura-export-metadata

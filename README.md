@@ -279,12 +279,20 @@ We can **describe maintenance jobs** as Hasura Events and keep the knowledge of 
 
 Using Hasura.io as backend-for-frontend implies that the Application State is composed by:
 
-- database(s) schema(s)
-- Hasura(s)' metadata
-- data seeding scripts
-- data snapshots
+1. database(s) schema(s)
+2. Hasura(s)' metadata
+2. data seeding scripts
+4. data snapshots
 
-Both can be
+Points n 1, 2 and 3 are managed by the [Hasura CLI](https://hasura.io/docs/latest/graphql/core/migrations/index.html#how-is-hasura-state-managed) via:
+
+- migrations
+- metadata
+- seeding
+
+Point n.4 is slightly more complicated and is usually delegated to the DevOps management realm. Long story short, the full state should be restored to a newly supplied environment. The classic name for such a huge responsibility is **Disaster Recovery**.
+
+
 
 ### Point & Click Configuration
 
