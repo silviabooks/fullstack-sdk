@@ -20,9 +20,12 @@ This repository collects a few components that help you build a modern Web Appli
 - [The Make Interface](#the-make-interface)
 - [PostgreSQL](#postgresql)
   - [Schema Management & Migrations](#schema-management--migrations)
-  - [Serverless Functions with TDD](#serverless-functions-with-tdd)
+  - [Serverless Functions with TDD](#serverless-functions)
+  - [TDD on PostgreSQL](#tdd-on-postgresql)
 - [Hasura.io](#hasuraio)
-- [Migrations & State Management](#migrations--state-management)
+  - [The Architectural Role of Hasura](#the-architectural-role-of-hasura)
+  - [Point & Click Configuration](#point--click-configuration)
+  - [Migrations & State Management](#migrations--state-management)
 - [TDD](#tdd)
 
 ---
@@ -217,6 +220,18 @@ One thing is certain: the only real argument agains Database Serverless was MONE
 
 ### TDD on PostgreSQL
 
+As we move logic into the Database Layer we must keep reliability up. Luckily, there is no easier place to do so.
+
+[PGTap](https://pgtap.org/) is a testing framework for Postgres that is:
+
+- easy to learn and use
+- can run in Docker
+- can be part of our CI/CD
+
+We can achieve 100% code-coverage for all the business critical data centric logic that we write.
+
+👉 **PLUS:** Tests run in transactions so they are **stateless by design!** 👈
+
 ---
 
 ## Hasura.io
@@ -260,18 +275,33 @@ We can **describe maintenance jobs** as Hasura Events and keep the knowledge of 
 
 > Hasura's medatata is Git-controlled.
 
+### Migrations & State Management
+
+Using Hasura.io as backend-for-frontend implies that the Application State is composed by:
+
+- database(s) schema(s)
+- Hasura(s)' metadata
+- data seeding scripts
+- data snapshots
+
+Both can be
+
 ### Point & Click Configuration
 
+Hasura.io offers a visual management tool called [Hasura Console](https://hasura.io/docs/latest/graphql/core/hasura-cli/hasura_console.html) that can **synchronize point&click actions with the local codebase** for metadata and migrations.
 
+1. our Engineers can operate the Declarative ACL rules, Proxy Actions, setup side-effects and Events using the Visual Console
+2. the resulting State Mutation is recorded as [database migrations](#migrations--state-management) and code-changes in a set of YAML files
+3. the Team can support the change by offering Code Reviews and testing the branch in [dispsable environments](#disposable-environments--gitpodio)
+4. approved changes are automatically distributed to any running environment including the Developer's
 
----
-
-## State Management & Migrations
-
-[[ TO BE COMPLETED ]]
 
 ---
 
 ## TDD
+
+[[ TO BE COMPLETED ]]
+
+## Disposable Environments & GitPod.io
 
 [[ TO BE COMPLETED ]]
