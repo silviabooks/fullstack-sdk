@@ -9,7 +9,7 @@ This repository collects a few components that help you build a modern Web Appli
 - We follow Test Driven Development principles
 - We maximize parallel work streams
 
-## Menu
+## Table of Contents
 
 - [Docker & DockerCompose](#docker--dockercompose)
   - [Types of Containers](#types-of-containers)
@@ -317,7 +317,7 @@ Hasura.io offers a visual management tool called [Hasura Console](https://hasura
 3. the Team can support the change by offering Code Reviews and testing the branch in [dispsable environments](#disposable-environments--gitpodio)
 4. approved changes are automatically distributed to any running environment including the Developer's
 
---
+---
 
 ## State Management Utilities
 
@@ -359,6 +359,8 @@ It runs a coneinerized version of the `hasura ** export` command.
 ## TDD
 
 [[ TO BE COMPLETED ]]
+
+---
 
 ## Disposable Environments & GitPod.io
 
