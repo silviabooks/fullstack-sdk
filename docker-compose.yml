@@ -85,6 +85,9 @@ services:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/postgres
       HASURA_GRAPHQL_ADMIN_SECRET: "${HASURA_ADMIN_SECRET:-hasura}"
       HASURA_GRAPHQL_ENDPOINT: http://127.0.0.1:8080
+      HASURA_APPLY_MIGRATIONS: "true"
+      HASURA_APPLY_METADATA: "true"
+      HASURA_APPLY_SEEDS: "true"
       HASURA_RUN_CONSOLE: "true"
     depends_on:
       hasura-engine:
@@ -118,6 +121,7 @@ services:
       HASURA_GRAPHQL_ADMIN_SECRET: "${HASURA_ADMIN_SECRET:-hasura}"
       HASURA_GRAPHQL_ENDPOINT: http://127.0.0.1:8080
       HASURA_EXPORT_METADATA: "true"
+      HASURA_EXPORT_DATABASE: "true"
     depends_on:
       hasura-engine:
         condition: service_healthy

@@ -1,6 +1,6 @@
 
 start:
-	@docker-compose up -d hasura-migrate adminer
+	@docker-compose up -d hasura-console adminer
 	@docker-compose logs -f hasura-engine
 
 stop:
@@ -21,6 +21,7 @@ test:
 
 hasura-console:
 	@docker-compose up -d hasura-console
+	@docker-compose logs -f hasura-console
 
 hasura-migrate:
 	@docker-compose up hasura-migrate

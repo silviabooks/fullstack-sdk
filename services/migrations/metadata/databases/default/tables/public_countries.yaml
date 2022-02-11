@@ -1,0 +1,16 @@
+table:
+  name: countries
+  schema: public
+select_permissions:
+- permission:
+    columns:
+    - id
+    - name
+    filter: {}
+  role: anonymous
+- permission:
+    columns:
+    - id
+    - name
+    filter: {}
+  role: service_auth

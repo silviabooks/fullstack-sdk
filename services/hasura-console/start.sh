@@ -27,7 +27,7 @@ socat TCP-LISTEN:9693,fork,reuseaddr,bind=hasura-console TCP:127.0.0.1:9693 &
     if [[ -v HASURA_EXPORT_DATABASE ]]
     then
         echo "Exporting database..."
-        hasura migrate create "init" --from-server --endpoint ${HASURA_GRAPHQL_ENDPOINT} --admin-secret ${HASURA_GRAPHQL_ADMIN_SECRET} --database-name=default --skip-update-check  || exit 1
+        hasura migrate create "full_schema" --from-server --endpoint ${HASURA_GRAPHQL_ENDPOINT} --admin-secret ${HASURA_GRAPHQL_ADMIN_SECRET} --database-name=default --skip-update-check  || exit 1
     else
         echo "Skipping database export"
     fi

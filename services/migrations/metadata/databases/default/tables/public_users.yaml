@@ -1,0 +1,28 @@
+table:
+  name: users
+  schema: public
+insert_permissions:
+- permission:
+    backend_only: false
+    check: {}
+    columns:
+    - country_id
+    - name
+  role: service_auth
+select_permissions:
+- permission:
+    columns:
+    - country_id
+    - created_at
+    - id
+    - last_login
+    - name
+    filter: {}
+  role: service_auth
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - last_login
+    filter: {}
+  role: service_auth
