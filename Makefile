@@ -7,6 +7,7 @@ stop:
 	@docker-compose down
 
 restart: stop start
+reset: stop clean start
 
 build:
 	@docker-compose build --no-cache
@@ -23,8 +24,8 @@ hasura-console:
 	@docker-compose up -d hasura-console
 	@docker-compose logs -f hasura-console
 
-hasura-migrate:
-	@docker-compose up hasura-migrate
+hasura-apply:
+	@docker-compose up hasura-apply
 
-hasura-export-metadata:
-	@docker-compose up hasura-export-metadata
+hasura-export:
+	@docker-compose up hasura-export

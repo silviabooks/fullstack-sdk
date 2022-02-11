@@ -93,7 +93,7 @@ services:
       hasura-engine:
         condition: service_healthy
 
-  hasura-migrate:
+  hasura-apply:
     build:
       context: ./services/hasura-console
       dockerfile: Dockerfile.dev
@@ -121,7 +121,7 @@ services:
       HASURA_GRAPHQL_ADMIN_SECRET: "${HASURA_ADMIN_SECRET:-hasura}"
       HASURA_GRAPHQL_ENDPOINT: http://127.0.0.1:8080
       HASURA_EXPORT_METADATA: "true"
-      HASURA_EXPORT_DATABASE: "true"
+      HASURA_EXPORT_DATABASE: "false"
     depends_on:
       hasura-engine:
         condition: service_healthy

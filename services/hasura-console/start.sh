@@ -56,7 +56,7 @@ socat TCP-LISTEN:9693,fork,reuseaddr,bind=hasura-console TCP:127.0.0.1:9693 &
     if [[ -v HASURA_APPLY_SEEDS ]]
     then
         echo "Apply SQL seeds..."
-        hasura seeds apply --endpoint ${HASURA_GRAPHQL_ENDPOINT} --admin-secret ${HASURA_GRAPHQL_ADMIN_SECRET} --skip-update-check
+        hasura seeds apply --endpoint ${HASURA_GRAPHQL_ENDPOINT} --admin-secret ${HASURA_GRAPHQL_ADMIN_SECRET} --database-name=default --skip-update-check
     else
         echo "Skipping seeds"
     fi

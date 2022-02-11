@@ -18,6 +18,13 @@ This repository collects a few components that help you build a modern Web Appli
   - [Volumes Mapping](#volumes-mapping)
   - [Environmental Variables & Secret](#environmental-variables--secrets)
 - [The Make Interface](#the-make-interface)
+  - [make start](#make-start)
+  - [make stop](#make-stop)
+  - [make test](#make-test)
+  - [make restart](#make-restart)
+  - [make reset](#make-reset)
+  - [make build](#make-build)
+  - [make clean](#make-clean)
 - [PostgreSQL](#postgresql)
   - [Schema Management & Migrations](#schema-management--migrations)
   - [Serverless Functions with TDD](#serverless-functions)
@@ -26,6 +33,10 @@ This repository collects a few components that help you build a modern Web Appli
   - [The Architectural Role of Hasura](#the-architectural-role-of-hasura)
   - [Point & Click Configuration](#point--click-configuration)
   - [Migrations & State Management](#migrations--state-management)
+- [State Management Utilities](#state-management-utilities)
+  - [make hasura-console](#make-hasura-console)
+  - [make hasura-apply](#make-hasura-apply)
+  - [make hasura-export](#make-hasura-export)
 - [TDD](#tdd)
 
 ---
@@ -104,6 +115,11 @@ We aim to simplify the Developer Experience by suggestig a seamless way to inter
 
 - stop
 - start
+
+### make reset
+
+Like `make restart`, but it also clean up the state.  
+It's a fresh start over.
 
 ### make build
 
@@ -292,8 +308,6 @@ Points n 1, 2 and 3 are managed by the [Hasura CLI](https://hasura.io/docs/lates
 
 Point n.4 is slightly more complicated and is usually delegated to the DevOps management realm. Long story short, the full state should be restored to a newly supplied environment. The classic name for such a huge responsibility is **Disaster Recovery**.
 
-
-
 ### Point & Click Configuration
 
 Hasura.io offers a visual management tool called [Hasura Console](https://hasura.io/docs/latest/graphql/core/hasura-cli/hasura_console.html) that can **synchronize point&click actions with the local codebase** for metadata and migrations.
@@ -303,6 +317,42 @@ Hasura.io offers a visual management tool called [Hasura Console](https://hasura
 3. the Team can support the change by offering Code Reviews and testing the branch in [dispsable environments](#disposable-environments--gitpodio)
 4. approved changes are automatically distributed to any running environment including the Developer's
 
+--
+
+## State Management Utilities
+
+This project setup offers a few utilities that you can use via `docker-compose` and the relative `make` interface. 
+
+### make hasura-console
+
+It runs a conteinerized version of the [Hasura Console](https://hasura.io/docs/latest/graphql/core/hasura-cli/hasura_console.html) that will be available at port `9695` and `9693`.
+
+> By default it is configured to apply (at boot time):
+> 
+> - migrations
+> - metadata
+> - seeds.
+
+👉 **Use this console to keep your local metadata in sync with your clickings.** 👈
+
+> Use the console at:  
+> http://localhost:9695
+
+### make hasura-apply
+
+It runs a coneinerized version of the `hasura ** apply` command.
+
+> By default it is configured to apply:
+> 
+> - migrations
+> - metadata
+> - seeds.
+
+### make hasura-export
+
+It runs a coneinerized version of the `hasura ** export` command.
+
+> By default it is configured to export only metadata, but you can also use it to generate a full initial migration.
 
 ---
 
