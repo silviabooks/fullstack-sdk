@@ -43,7 +43,7 @@ hasura-export:
 
 start-auth:
 	@mkdir -p .docker-data
-	@docker-compose up -d auth
+	@docker-compose up -d auth adminer
 	@docker-compose logs -f auth
 
 stop-auth:
@@ -56,7 +56,7 @@ test-auth:
 build-auth:
 	@docker-compose build --no-cache auth
 
-clean: stop
+clean-auth: stop
 	@rm -rf .docker-data/auth-db
 
 restart-auth: stop-auth start-auth
