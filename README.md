@@ -100,9 +100,20 @@ Striving to improve the Developer Experience to the exteme, this Project provide
 1. It can run in your browser thanks to [GitPod.io](https://gitpod.io)
 2. It builds and run locally thanks to [DockerCompose](https://docs.docker.com/compose/)
 
-While we will go in great details regarding the DockerCompose setup, and how to run the system in your local machine, the easiest way to run the project is in a [GitPod Workspace](https://www.gitpod.io/docs/life-of-workspace):
+We will go in great details regarding the DockerCompose setup, and how to run the system in your local machine.
+
+🔥 But the easiest way to run the project is in a [GitPod Workspace](https://www.gitpod.io/docs/life-of-workspace) 🔥
 
 [![Open in GitPod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io#https://github.com/revisohq/fullstack-sdk)
+
+This is made possible by Kuberneted and two small files:
+
+- `.gitpod.yml`
+- `.gitpod.Dockerfile`
+
+Without going in much details, you can edit those files to configure your workspace with any kind of sotware that you may think to use on a Linux machine, and any VSCode Extension or configuration that you are used to.
+
+🤬 I don't get any money if you yse GitPod or not... I simply believe is a great tool and sponsor it in a transparent way 🤟.
 
 ---
 
