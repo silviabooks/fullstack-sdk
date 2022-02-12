@@ -7,7 +7,7 @@ stop:
 	@docker-compose down
 
 restart: stop start
-reset: stop clean start
+reset: stop build clean start
 
 build:
 	@docker-compose build --no-cache

@@ -1,4 +1,4 @@
-FROM hasura/graphql-engine:v2.1.1.cli-migrations-v3
+FROM hasura/graphql-engine:v2.2.0.cli-migrations-v3
 
 # Install dependencies and link stuff:
 RUN apt-get update -y && apt-get install -y curl socat

@@ -11,6 +11,7 @@ This repository collects a few components that help you build a modern Web Appli
 
 ## Table of Contents
 
+- [Project's Composition](#projects-composition)
 - [Docker & DockerCompose](#docker--dockercompose)
   - [Types of Containers](#types-of-containers)
   - [Dependencies Between Services](#dependencies-between-services)
@@ -37,9 +38,30 @@ This repository collects a few components that help you build a modern Web Appli
   - [make hasura-console](#make-hasura-console)
   - [make hasura-apply](#make-hasura-apply)
   - [make hasura-export](#make-hasura-export)
+- [JSON Web Tokens](#json-web-tokens)
+- [JavaScript](#javascript)
+  - [ForrestJS](#forrestjs)
+  - [Fastify](#fastify)
+  - [Axios](#axios)
+  - [Jsonwebtoken](#jsonwebtoken)
 - [TDD](#tdd)
 - [AuthenticationLESS Apps](#authenticationless-apps)
 - [Disposable Environments & GitPod.io](#disposable-environments--gitpodio)
+
+---
+
+## Project's Composition
+
+### Services
+
+- [postgres](./services/postgres/README.md)
+- [hasura-engine](./services/hasura-engine/README.md)
+- [hasura-console](./services/hasura-console/README.md)
+- [migrations](./services/migrations/README.md)
+
+### Apps
+
+- [TSDigital](./apps/tsdigital/README.md)
 
 ---
 
@@ -376,6 +398,46 @@ It runs a coneinerized version of the `hasura ** export` command.
 
 > By default it is configured to export only metadata, but you can also use it to generate a full initial migration.
 
+## JSON Web Tokens
+
+JSON Web Tokens are an open, industry standard [RFC 7519](https://tools.ietf.org/html/rfc7519) method for representing claims securely between two parties.
+
+👉 [JWT.IO allows you to decode, verify and generate JWT](https://jwt.io)
+
+---
+
+## Javascript
+
+Javascript is the language of the web, and the **ONLY REAL FULL-STACK LANGUAGE** available to mankind because it's the only one that runs ALSO on a browser.
+
+> Yes, there are sub-languages like [Typescript](https://www.typescriptlang.org/) that [transpiles](https://en.wikipedia.org/wiki/Source-to-source_compiler) to Javascript and provide features like strict types checking and look more like Object-Oriented languages that many are accustomed to.
+
+**IMHO transpiling is an expensive operation** that slow down the Developer Experience. When you follow [a few Javascript bestpractices](https://marcopeg.com/javascript-the-good-parts-in-2020/), you don't have to worry about performances as the [mighty V8](https://v8.dev/) will kick in with all [its power and fury](https://www.digitalocean.com/community/tutorials/js-v8-engine).
+
+### ForrestJS
+
+The JavaScript Plugin Library
+
+👉 [Go to docs](https://forrestjs.github.io)
+
+### Fastify
+
+Fast and low overhead web framework, for Node.js
+
+👉 [Go to docs](https://www.fastify.io/)
+
+### Axios
+
+Promise based HTTP client for the browser and node.js
+
+👉 [Go to docs](https://axios-http.com/)
+
+### Jsonwebtoken
+
+An implementation of [JSON Web Tokens](https://tools.ietf.org/html/rfc7519).
+
+👉 [Go to docs](https://github.com/auth0/node-jsonwebtoken)
+
 ---
 
 ## TDD
@@ -424,3 +486,4 @@ App->ServiceX: AT
 -->
 
 ---
+
