@@ -394,11 +394,33 @@ It runs a coneinerized version of the `hasura ** export` command.
 
 All the OnePlatform Apps that we build should be **AUTHENTICATION-LESS** meaning that they should receive and persist an existing session that is maintained and secured by a single entity (TS Digital Portal - at the time of writing).
 
-```sequence {theme="hand"}
-Andrew->China: Says Hello
-Note right of China: China thinks\nabout it
-China-->Andrew: How are you?
-Andrew->>China: I am good thanks!
-```
+A very simple technique to achieve acceptable security is [described by Auth0](https://auth0.com/blog/refresh-tokens-what-are-they-and-when-to-use-them/#:~:text=from%20compromised%20tokens.-,Refresh%20Token%20Automatic%20Reuse%20Detection,-Refresh%20tokens%20are) and shown in the following chart.
+
+<img src="./docs/diagrams/authentication-less-flow.svg" style="background:white" />
+
+
+> The trick is that the first Refresh Token is **intended for immediate use** by the client App. It should have a lifespan of a few seconds, maybe a minute.
+
+This information can be safely forwarded via URI param as a malicious interceptor would:
+
+1. have a very short lifespan to produce an attak
+2. any racing condition with the legit/malicious user would invalidate the entire session
+
+👉 For a realistic damage to take place, a malicious attacker would have to **refresh the token BEFORE the legitimate bearer** makes her first attempt. In such a case, the attacker would have a valid Access Token in his hands. And that should be short-lived anyway.
+
+This event could be **FURTHERLY MITIGATED** by delaying the First Refresh giving time for a racing condition to take place BEFORE releasing the Access Token. 
+
+It would make for a slower First Page Loading Time, but would greatly increase security. With such combination, the only possible way to breach would be in case of a full hijacking of the redirect. Basically a bad guy sitting in front of an authenticated browser. But that's beyond service-to-service security.
+
+<!--
+# https://bramp.github.io/js-sequence-diagrams/
+Note right of TSDigital: Generate a new:\n- Token Family (TF)\n-short-lived Refresh Token (RT)
+TSDigital->App: Send RT
+App->TSDigital: Refresh Access Token (AT)
+Note right of TSDigital: Validate RT against TF + History.\nIf used,  invalidate TF
+Note right of TSDigital: Rotate RT and keep a history\nof expired RT
+TSDigital->App: Send AT + new RT
+App->ServiceX: AT
+-->
 
 ---
