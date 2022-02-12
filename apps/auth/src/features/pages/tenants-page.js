@@ -4,7 +4,7 @@ module.exports = async (request, reply) => {
   const res = await request.pg.query(GET_TENANTS, [request.auth.uname]);
 
   const tenantsList = res.rows.map(
-    (item) => `<li><a href="/tenants/:${item.tenant}">${item.tenant}</a></li>`
+    (item) => `<li><a href="/tenants/${item.tenant}">${item.tenant}</a></li>`
   );
 
   reply.type("html").send(`

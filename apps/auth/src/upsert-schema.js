@@ -34,6 +34,23 @@ const up = async (pg) => {
     , ('luke', 't2')
     , ('ian', 't3')
   `);
+
+  // CATALOG
+  await pg.query(`
+    CREATE TABLE "public"."catalog" (
+      "user" TEXT NOT NULL,
+      "tenant" TEXT NOT NULL,
+      "name" TEXT NOT NULL,
+      PRIMARY KEY ( "user", "tenant", "name" )
+    )
+  `);
+  await pg.query(`
+    INSERT INTO "public"."catalog"
+      ("user", "tenant", "name") VALUES
+      ('luke', 't1', 'app1')
+    , ('luke', 't1', 'app2')
+    , ('ian', 't3', 'app1')
+  `);
 };
 
 module.exports = {
