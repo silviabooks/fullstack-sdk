@@ -9,6 +9,25 @@ This repository collects a few components that help you build a modern Web Appli
 - We follow Test Driven Development principles
 - We maximize parallel work streams
 
+## Start Coding
+
+The following commands have been tested on MacOSX with Docker and on GitPod.  
+You need `Docker` to be up and running on your system.
+
+```bash
+# Start & Stop
+make start
+make stop
+
+# Full State Reset
+# (it will also rebuild all the containers)
+make reset
+```
+
+or click this button to enjoy a **Remote Development Environment**:
+
+[![Open in GitPod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io#https://github.com/revisohq/fullstack-sdk)
+
 ## Table of Contents
 
 - [Project's Composition](#projects-composition)
