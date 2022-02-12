@@ -4,11 +4,48 @@ services:
   ### APPS
   ###
 
+  auth:
+    build:
+      context: ./apps/auth
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${AUTH_PORT:-4000}:8080"
+    volumes:
+      - ./apps/auth/src:/usr/src/app/src:delegated
+      - ./apps/auth/package.json:/usr/src/app/package.json
+      - ./apps/auth/package-lock.json:/usr/src/app/package-lock.json
+    environment:
+      JWT_SECRET: ${HASURA_JWT_SECRET:-h2leOvdgjwpV0As5L8rZlV3VDVOsOmwk}
+    entrypoint: ["npm", "start"]
+    restart: unless-stopped
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "-", "http://auth:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
 
   ###
   ### TESTS
   ###
 
+  auth-test:
+    build:
+      context: ./apps/auth
+      dockerfile: Dockerfile.dev
+    environment:
+      TEST_URL: http://auth:8080
+    volumes:
+      - ./apps/auth/src:/usr/src/app/src:delegated
+      - ./apps/auth/test:/usr/src/app/test:delegated
+      - ./apps/auth/jest.config:/usr/src/app/jest.config:delegated
+    entrypoint: ["npm", "run", "test"]
+    tty: true
+    depends_on:
+      auth:
+        condition: service_healthy
 
   ###
   ### SERVICES
@@ -20,9 +57,6 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - "8080:8080"
-    depends_on:
-      hasura-db:
-        condition: service_healthy
     environment:
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
@@ -32,6 +66,9 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
     restart: unless-stopped
+    depends_on:
+      hasura-db:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO", "-", "http://localhost:8080/healthz"]
       interval: 5s
@@ -43,7 +80,7 @@ services:
       context: ./services/hasura-db
       dockerfile: Dockerfile.dev
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${HASURA_DB_PORT:-5432}:5432"
     volumes:
       - .docker-data/hasura-db:/var/lib/postgresql/data
     environment:
@@ -60,7 +97,7 @@ services:
       context: ./services/hasura-db
       dockerfile: Dockerfile.dev
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${AUTH_DB_PORT:-5433}:5432"
     volumes:
       - .docker-data/auth-db:/var/lib/postgresql/data
     environment:
@@ -71,7 +108,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 20
-
 
   ###
   ### UTILITIES

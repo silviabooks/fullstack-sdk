@@ -44,9 +44,12 @@ This repository collects a few components that help you build a modern Web Appli
   - [Fastify](#fastify)
   - [Axios](#axios)
   - [Jsonwebtoken](#jsonwebtoken)
-- [TDD](#tdd)
 - [AuthenticationLESS Apps](#authenticationless-apps)
-- [Disposable Environments & GitPod.io](#disposable-environments--gitpodio)
+- [NodeJS Backend App](#nodejs-backend-app)
+  - [Files Structure](#files-structure)
+  - [Make & DockerCompose Interface](#make--dockercompose-interface)
+  - [NPM Interface](#npm-interface)
+  - [TDD & Native Tests](#tdd--native-tests)
 
 ---
 
@@ -94,11 +97,11 @@ We rely on the `depends_on` and `healthcheck` declarations to create a **boot or
 
 > This is intended as a development facilitation and should have no impact in production.
 
-EXPLANATION: 
+EXPLANATION:
 
 A **PRODUCTION** environment implements an **eager crash** approach where a service that fails a precondition (eg. the DB is not ready) will simply crash. The runner (Kube? Docker?) will apply a failover policy and restart it.
 
-In a **DEVELOPMENT** environment, the service is likely wrapped by a [File System Monitoring Mechanism](https://www.npmjs.com/package/nodemon) that will rebuild/restart the service any time its source code chages. 
+In a **DEVELOPMENT** environment, the service is likely wrapped by a [File System Monitoring Mechanism](https://www.npmjs.com/package/nodemon) that will rebuild/restart the service any time its source code chages.
 
 In case of a "genuine - bug driven - crash", such event will be catched by the FS Monitor and not by the runner.
 
@@ -116,11 +119,11 @@ postgres:
 
 ### Volumes Mapping
 
-[[ TO BE COMPLETED ]]
+[[TO BE COMPLETED]]
 
 ### Environmental Variables & Secrets
 
-[[ TO BE COMPLETED ]]
+[[TO BE COMPLETED]]
 
 ---
 
@@ -133,7 +136,7 @@ We aim to simplify the Developer Experience by suggestig a seamless way to inter
 - build Development Containers
 - pulls project's dependencies
 - boot the entire Development Environment
-- prepare the initial state 
+- prepare the initial state
 - show relevant logs
 
 ### make stop
@@ -187,7 +190,7 @@ PostgreSQL can:
 - handle push notifications
 - **PERFORM UNIT TESTS AND TDD ON POSTGRES**
 
-With the amount of data that we (as Industry) manage in an average size project / service we could use only PG as data management solution and live happily ever after. 
+With the amount of data that we (as Industry) manage in an average size project / service we could use only PG as data management solution and live happily ever after.
 
 _There are of course exceptions to this bold statement._
 
@@ -205,7 +208,7 @@ Please refer to the [State Management & Migrations](#state-management--migration
 
 ### Serverless Functions
 
-**Serverless Functions** seem to be a cool new tech.  
+**Serverless Functions** seem to be a cool new tech.
 
 Or is it?
 
@@ -238,12 +241,12 @@ Logical reliability is NOT a problem - and it's never been!
 
 When we put logic on the Application Layer (aka: Servers or Cloud provided Serverless Functions) we can leverage on **HORIZONTAL SCALABILITY**.
 
-> When we deploy Serverless Functions in a DBMS we simply CAN NOT SCALE HORIZONTALLY. Period. 
+> When we deploy Serverless Functions in a DBMS we simply CAN NOT SCALE HORIZONTALLY. Period.
 
 Is it a problem?  
 Maybe yes, maybe no.
 
-Up until approximately 10 years (~2010s), **VERTICAL SCALING WAS BOTH DIFFICULT AND LIMITED**. Not to mention expensive. 
+Up until approximately 10 years (~2010s), **VERTICAL SCALING WAS BOTH DIFFICULT AND LIMITED**. Not to mention expensive.
 
 It wasn't such a good idea to keep scaling up a DBMS Server. Too much work. And the [VERTICAL LIMIT wasn't as high as K2](https://www.imdb.com/title/tt0190865/).
 
@@ -253,7 +256,7 @@ But then...
 
 > Take me to the magic of the moment  
 > On a glory night  
-> Where the children of tomorrow share their dreams  
+> Where the children of tomorrow share their dreams
 >
 > [The Wind of Change by Scorpions](https://www.youtube.com/watch?v=n4RjJKxsamQ)
 
@@ -328,11 +331,11 @@ Suggested materials:
 
 We can use Hasura as our **backend-for-frontend** as so unify how our React App makes server calls.
 
-Most of the **CRUD operations will be described as Hasura  schema based API calls**, effectively removing (or postponing) to write boring and error-prone code that is costly to write, test and maintain.
+Most of the **CRUD operations will be described as Hasura schema based API calls**, effectively removing (or postponing) to write boring and error-prone code that is costly to write, test and maintain.
 
 We can **proxy any custom service** through Hasura with simple declarative rules that can be automatically propagated to any environment.
 
-We can **describe maintenance jobs** as Hasura Events and keep the knowledge of those stuff in the Git codebase along with any custom logic. 
+We can **describe maintenance jobs** as Hasura Events and keep the knowledge of those stuff in the Git codebase along with any custom logic.
 
 > Hasura's medatata is Git-controlled.
 
@@ -342,7 +345,7 @@ Using Hasura.io as backend-for-frontend implies that the Application State is co
 
 1. database(s) schema(s)
 2. Hasura(s)' metadata
-2. data seeding scripts
+3. data seeding scripts
 4. data snapshots
 
 Points n 1, 2 and 3 are managed by the [Hasura CLI](https://hasura.io/docs/latest/graphql/core/migrations/index.html#how-is-hasura-state-managed) via:
@@ -386,14 +389,14 @@ hasura console
 
 ## State Management Utilities
 
-This project setup offers a few utilities that you can use via `docker-compose` and the relative `make` interface. 
+This project setup offers a few utilities that you can use via `docker-compose` and the relative `make` interface.
 
 ### make hasura-console
 
 It runs a conteinerized version of the [Hasura Console](https://hasura.io/docs/latest/graphql/core/hasura-cli/hasura_console.html) that will be available at port `9695` and `9693`.
 
 > By default it is configured to apply (at boot time):
-> 
+>
 > - migrations
 > - metadata
 > - seeds.
@@ -408,7 +411,7 @@ It runs a conteinerized version of the [Hasura Console](https://hasura.io/docs/l
 It runs a coneinerized version of the `hasura ** apply` command.
 
 > By default it is configured to apply:
-> 
+>
 > - migrations
 > - metadata
 > - seeds.
@@ -461,18 +464,6 @@ An implementation of [JSON Web Tokens](https://tools.ietf.org/html/rfc7519).
 
 ---
 
-## TDD
-
-[[ TO BE COMPLETED ]]
-
----
-
-## Disposable Environments & GitPod.io
-
-[[ TO BE COMPLETED ]]
-
----
-
 ## AuthenticationLESS Apps
 
 All the OnePlatform Apps that we build should be **AUTHENTICATION-LESS** meaning that they should receive and persist an existing session that is maintained and secured by a single entity (TS Digital Portal - at the time of writing).
@@ -480,7 +471,6 @@ All the OnePlatform Apps that we build should be **AUTHENTICATION-LESS** meaning
 A very simple technique to achieve acceptable security is [described by Auth0](https://auth0.com/blog/refresh-tokens-what-are-they-and-when-to-use-them/#:~:text=from%20compromised%20tokens.-,Refresh%20Token%20Automatic%20Reuse%20Detection,-Refresh%20tokens%20are) and shown in the following chart.
 
 <img src="./docs/diagrams/authentication-less-flow.svg" style="background:white" />
-
 
 > The trick is that the first Refresh Token is **intended for immediate use** by the client App. It should have a lifespan of a few seconds, maybe a minute.
 
@@ -491,7 +481,7 @@ This information can be safely forwarded via URI param as a malicious intercepto
 
 👉 For a realistic damage to take place, a malicious attacker would have to **refresh the token BEFORE the legitimate bearer** makes her first attempt. In such a case, the attacker would have a valid Access Token in his hands. And that should be short-lived anyway.
 
-This event could be **FURTHERLY MITIGATED** by delaying the First Refresh giving time for a racing condition to take place BEFORE releasing the Access Token. 
+This event could be **FURTHERLY MITIGATED** by delaying the First Refresh giving time for a racing condition to take place BEFORE releasing the Access Token.
 
 It would make for a slower First Page Loading Time, but would greatly increase security. With such combination, the only possible way to breach would be in case of a full hijacking of the redirect. Basically a bad guy sitting in front of an authenticated browser. But that's beyond service-to-service security.
 
@@ -508,3 +498,82 @@ App->ServiceX: AT
 
 ---
 
+## NodeJS Backend App
+
+You can use the `apps/auth` as codebase reference for this section.
+
+### Files Structure
+
+- `src/` - [refer to a ForrestJS App structure](https://forrestjs.github.io/howto/my-first-rest-api/)
+  - `services/`
+  - `features/`
+  - `index.js` - App's entry point
+- `test/`
+  - `cases/` - E2E test cases
+  - `templates/` - Jest templates configuration
+- `jest.config.js` - Jest main configuration
+- `package.json` - List dependencies and [NPM Scripts](https://docs.npmjs.com/cli/v8/using-npm/scripts)
+
+### Make & DockerCompose Interface
+
+The NodeJS App offers a dockerized Development Environment that:
+
+- runs the App and exposes the port
+- monitors the `/src` folder and restard the process
+- runs Unit and E2E tests
+
+The same Make APIs are replicated suffixed by the App's name:
+
+```bash
+make start-auth
+make stop-auth
+make test-auth
+make build-auth
+```
+
+The App provides a `Dockerfile.dev` that builds the Development Container with the NPM dependencies.
+
+**🚧 NOTE:** when you add a new NPM dependency by changing the `package.json` file, you must rebuild the Development Container by running `make build-auth`.
+
+### NPM Interface
+
+Running the App via NPM may not be that easy and it doesn't provide much of an advantage.
+
+The interface is the classic:
+
+```bash
+cd services/auth
+npm install
+npm start
+```
+
+But you must provide all the relevant environmental variables that are documented in the `docker-compose.yml`.
+
+### TDD & Native Tests
+
+Running tests is a different matter and it's as easy as:
+
+```bash
+cd services/auth
+npm install
+
+# Run both Unit and E2E:
+npm test
+
+# Start a TDD session:
+npm run tdd:unit
+npm run tdd:e2e
+```
+
+👉 A TDD session will run the tests and monitor for changes in the soure files, then run it again.
+
+It is a very efficient way of work as you never have to really move your hands away from your keyboard.
+
+> I usually keep 2 Terminal sessions as a side-panel in VSCode
+> and run both Unit and E2E TDD.
+
+The E2E tests must communicate with the running App to perform tests via API calls. Hence they need to know WHERE to reach for the App.
+
+The **DEFAULT APP PORT** is hard-coded in `test/templates/e2e/jest.env.js` but you can easily configure it by providing an environmental variable `TEST_URL` via CLI or `.env.development` file.
+
+👉 Environmental files are sourced using [dotenv](https://www.npmjs.com/package/dotenv).
