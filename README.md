@@ -54,12 +54,17 @@ This repository collects a few components that help you build a modern Web Appli
 
 ### Services
 
+Services are stuff that in a Production environment we will likely purchase from an external supplier.
+
 - [postgres](./services/postgres/README.md)
 - [hasura-engine](./services/hasura-engine/README.md)
 - [hasura-console](./services/hasura-console/README.md)
 - [migrations](./services/migrations/README.md)
+- [adminer](https://www.adminer.org/)
 
 ### Apps
+
+Apps are stuff that we build. Our code. Our precious.
 
 - [TSDigital](./apps/tsdigital/README.md)
 
