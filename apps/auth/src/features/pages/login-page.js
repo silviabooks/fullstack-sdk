@@ -11,7 +11,7 @@ module.exports = async (request, reply) => {
   // Produce JWT & send away
   const jwt = await request.jwt.sign(res.rows[0]);
   reply
-    .type("html")
+    .type("text/html")
     .setCookie("auth", jwt, {
       path: "/",
       httpOnly: true

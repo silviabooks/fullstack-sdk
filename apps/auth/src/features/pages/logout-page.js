@@ -1,6 +1,6 @@
 module.exports = (request, reply) => {
   reply
-    .type("html")
+    .type("text/html")
     .setCookie("auth", "-", {
       path: "/",
       httpOnly: true,

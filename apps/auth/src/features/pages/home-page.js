@@ -9,7 +9,7 @@ module.exports = async (request, reply) => {
   `
   );
 
-  reply.type("html").send(`
+  reply.type("text/html").send(`
     <h1>Login As:</h1>
     ${loginLinks.join("")}
   `);

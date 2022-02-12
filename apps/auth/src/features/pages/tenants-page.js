@@ -7,7 +7,7 @@ module.exports = async (request, reply) => {
     (item) => `<li><a href="/tenants/${item.tenant}">${item.tenant}</a></li>`
   );
 
-  reply.type("html").send(`
+  reply.type("text/html").send(`
     <h1>Tenants</h1>
     <ul>${tenantsList.join("")}</ul>
     <hr />

@@ -14,6 +14,19 @@ module.exports = async (request, reply) => {
     return;
   }
 
-  console.log("****", res.rows);
-  reply.send("ok");
+  const appsList = res.rows.map(
+    (item) => `
+    <li>
+      <a href="/open/${request.params.tenant}/${item.name}">${item.name}</a>
+    </li>
+  `
+  );
+
+  reply.type("text/html").send(`<h2>Apps</h2>
+    <ul>
+      ${appsList.join("")}
+    </ul>
+    <hr />
+    <a href="/logout">Logout</a>
+  `);
 };
