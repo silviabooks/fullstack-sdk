@@ -31,6 +31,7 @@ or click this button to enjoy a **Remote Development Environment**:
 ## Table of Contents
 
 - [Project's Composition](#projects-composition)
+- [Automated Development Environment](#automated-development-environment)
 - [Docker & DockerCompose](#docker--dockercompose)
   - [Types of Containers](#types-of-containers)
   - [Dependencies Between Services](#dependencies-between-services)
@@ -89,6 +90,19 @@ Services are stuff that in a Production environment we will likely purchase from
 Apps are stuff that we build. Our code. Our precious.
 
 - [auth](./apps/auth/README.md)
+
+---
+
+## Automated Development Environment
+
+Striving to improve the Developer Experience to the exteme, this Project provides a high degree of automation:
+
+1. It can run in your browser thanks to [GitPod.io](https://gitpod.io)
+2. It builds and run locally thanks to [DockerCompose](https://docs.docker.com/compose/)
+
+While we will go in great details regarding the DockerCompose setup, and how to run the system in your local machine, the easiest way to run the project is in a [GitPod Workspace](https://www.gitpod.io/docs/life-of-workspace):
+
+[![Open in GitPod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io#https://github.com/revisohq/fullstack-sdk)
 
 ---
 
