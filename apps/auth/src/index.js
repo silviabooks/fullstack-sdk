@@ -7,7 +7,8 @@ const serviceCookie = require("@forrestjs/service-fastify-cookie");
 const servicePg = require("./service-pg");
 
 const upsertSchema = require("./upsert-schema");
-const pages = require("./features/pages");
+const publicPages = require("./features/public-pages");
+const privatePages = require("./features/private-pages");
 
 forrest.run({
   // trace: "compact",
@@ -18,5 +19,5 @@ forrest.run({
     servicePg,
     serviceCookie
   ],
-  features: [upsertSchema, pages]
+  features: [upsertSchema, publicPages, privatePages]
 });

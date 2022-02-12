@@ -1,8 +1,8 @@
 const homePage = require("./home-page");
 const loginPage = require("./login-page");
 const logoutPage = require("./logout-page");
-const tenantsPage = require("./tenants-page");
-const catalogPage = require("./catalog-page");
+// const tenantsPage = require("./tenants-page");
+// const catalogPage = require("./catalog-page");
 
 const authenticate = async (request, reply, next) => {
   try {
@@ -34,18 +34,6 @@ module.exports = {
       method: "GET",
       url: "/login/:uname",
       handler: loginPage
-    },
-    {
-      method: "GET",
-      url: "/tenants",
-      preValidation: authenticate,
-      handler: tenantsPage
-    },
-    {
-      method: "GET",
-      url: "/tenants/:tenant",
-      preValidation: authenticate,
-      handler: catalogPage
     }
   ]
 };

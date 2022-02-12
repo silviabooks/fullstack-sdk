@@ -51,6 +51,35 @@ const up = async (pg) => {
     , ('luke', 't1', 'app2')
     , ('ian', 't3', 'app1')
   `);
+
+  // APPS
+  await pg.query(`
+    CREATE TABLE "public"."apps" (
+      "name" TEXT NOT NULL,
+      "url" TEXT NOT NULL,
+      PRIMARY KEY ( "name" )
+    )
+  `);
+  await pg.query(`
+    INSERT INTO "public"."apps"
+      ("name", "url") VALUES
+      ('app1', 'http://localhost:3000')
+    , ('app2', 'http://localhost:3002')
+  `);
+
+  // FAMILY TOKENS
+  await pg.query(`CREATE EXTENSION IF NOT EXISTS pgcrypto;`);
+  await pg.query(`
+    CREATE TABLE "public"."family_tokens" (
+      "id" uuid NOT NULL DEFAULT gen_random_uuid(), 
+      "created_at" timestamptz NOT NULL DEFAULT now(),
+      "is_valid" BOOL DEFAULT true,
+      "user" TEXT NOT NULL,
+      "tenant" TEXT NOT NULL,
+      "app" TEXT NOT NULL,
+      PRIMARY KEY ("id")
+    );
+  `);
 };
 
 module.exports = {

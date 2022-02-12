@@ -26,27 +26,14 @@ describe("Catalog Page", () => {
       };
     });
 
-    it("Should return 404 for a non existing tenant", async () => {
-      const fn = jest.fn();
+    it("Should return a message in case no apps are available", async () => {
+      const res = await global.get("/tenants/foobar", axiosOptions);
+      expect(res).not.toContain("<ul>");
+    });
 
-      try {
-        await global.get("/tenants/foobar", axiosOptions);
-      } catch (err) {
-        fn(err);
-      }
-
-      expect(fn.mock.calls.length).toBe(1);
-      expect(fn.mock.calls[0][0].response.status).toBe(404);
+    it("Should provide a list of tenants for the correct user", async () => {
+      const res = await global.get("/tenants/t1", axiosOptions);
+      expect(res).toContain("<ul>");
     });
   });
-
-  // it("Should provide a list of tenants for the correct user", async () => {
-  //   const login = await global.rawGet("/login/luke", { withCredentials: true });
-  //   const authCookie = login.headers["set-cookie"][0].split(";").shift();
-
-  // const res = await global.get("/tenants", );
-
-  //   expect(res).toContain("t1");
-  //   expect(res).toContain("t2");
-  // });
 });
