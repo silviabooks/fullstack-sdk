@@ -19,6 +19,12 @@ select_permissions:
     - name
     filter: {}
   role: service_auth
+- permission:
+    columns:
+    - name
+    filter: {}
+    limit: 1
+  role: user
 update_permissions:
 - permission:
     check: null
