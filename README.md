@@ -31,13 +31,15 @@ This repository collects a few components that help you build a modern Web Appli
   - [TDD on PostgreSQL](#tdd-on-postgresql)
 - [Hasura.io](#hasuraio)
   - [The Architectural Role of Hasura](#the-architectural-role-of-hasura)
-  - [Point & Click Configuration](#point--click-configuration)
   - [Migrations & State Management](#migrations--state-management)
+  - [Point & Click Configuration](#point--click-configuration)
 - [State Management Utilities](#state-management-utilities)
   - [make hasura-console](#make-hasura-console)
   - [make hasura-apply](#make-hasura-apply)
   - [make hasura-export](#make-hasura-export)
 - [TDD](#tdd)
+- [AuthenticationLESS Apps](#authenticationless-apps)
+- [Disposable Environments & GitPod.io](#disposable-environments--gitpodio)
 
 ---
 
@@ -385,3 +387,18 @@ It runs a coneinerized version of the `hasura ** export` command.
 ## Disposable Environments & GitPod.io
 
 [[ TO BE COMPLETED ]]
+
+---
+
+## AuthenticationLESS Apps
+
+All the OnePlatform Apps that we build should be **AUTHENTICATION-LESS** meaning that they should receive and persist an existing session that is maintained and secured by a single entity (TS Digital Portal - at the time of writing).
+
+```sequence {theme="hand"}
+Andrew->China: Says Hello
+Note right of China: China thinks\nabout it
+China-->Andrew: How are you?
+Andrew->>China: I am good thanks!
+```
+
+---
