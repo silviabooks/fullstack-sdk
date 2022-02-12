@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   ###
-  ### SERVICES
+  ### APPS
   ###
 
 
@@ -11,7 +11,7 @@ services:
 
 
   ###
-  ### INFRASTRUCTURE
+  ### SERVICES
   ###
 
   hasura-engine:
@@ -45,7 +45,24 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - .docker-data/pg:/var/lib/postgresql/data
+      - .docker-data/hasura-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  auth-db:
+    build:
+      context: ./services/hasura-db
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - .docker-data/auth-db:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     restart: unless-stopped

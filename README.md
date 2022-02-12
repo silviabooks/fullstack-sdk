@@ -66,7 +66,7 @@ Services are stuff that in a Production environment we will likely purchase from
 
 Apps are stuff that we build. Our code. Our precious.
 
-- [TSDigital](./apps/tsdigital/README.md)
+- [auth](./apps/auth/README.md)
 
 ---
 
@@ -82,25 +82,27 @@ Docker & DockerCompose should be the only strict dependency on the Developer's m
 
 The `docker-compose.yml` for development should be divided in four sections:
 
-- SERVICES: those are the Apps built by the developers
-- TESTS: run tests agains the Services
+- APPS: code that is created and maintained by our Engineers
+- TESTS: run containerized tests agains the Apps
 - UTILITIES: stuff like Adminer or similar that would not run in production
-- INFRASTRUCTURE: anything that we would buy in production  
+- SERVICES: anything that we would buy in production  
   <small>(Databases, Redis, ...)</small>
 
 ### Dependencies Between Services
 
-We rely on the `depends_on` and `healthcheck` declarations to create a booting tree that will reliably boot and instrument the entire Development Environment right after the first `git clone`.
+We rely on the `depends_on` and `healthcheck` declarations to create a **boot ordered tree** that will reliably boot and instrument the entire Development Environment right after the first `git clone`.
 
 > This is intended as a development facilitation and should have no impact in production.
 
 EXPLANATION: 
 
-A **production** environment implements a **eager crash** approach where a service that fails a precondition (eg. the db is not ready) will simply crash. The runner will apply a failover policy and probably restart it.
+A **PRODUCTION** environment implements an **eager crash** approach where a service that fails a precondition (eg. the DB is not ready) will simply crash. The runner (Kube? Docker?) will apply a failover policy and restart it.
 
-In a **development** environment the service is likely wrapped by a File System monitoring mechanism that will rebuild/restart the service once its source code chages. In case of a crash, such event will be catched by the FS monitor and not by the runner.
+In a **DEVELOPMENT** environment, the service is likely wrapped by a [File System Monitoring Mechanism](https://www.npmjs.com/package/nodemon) that will rebuild/restart the service any time its source code chages. 
 
-> Hence, in development we must be sure that the infrastructural preconditions are met BEFORE attempting to star a service.
+In case of a "genuine - bug driven - crash", such event will be catched by the FS Monitor and not by the runner.
+
+> Hence, in development we must be sure that the service's infrastructural preconditions are met BEFORE attempting to start a service.
 
 ### Ports Mapping
 
@@ -147,8 +149,9 @@ We aim to simplify the Developer Experience by suggestig a seamless way to inter
 
 ### make reset
 
-Like `make restart`, but it also clean up the state.  
-It's a fresh start over.
+Like `make restart`, but it also clean up the state and rebuild any dependency / containers.
+
+👉 It's a fresh start over.
 
 ### make build
 
@@ -170,7 +173,7 @@ It's a fresh start over.
 
 ## PostgreSQL
 
-PostgreSQL is an Open Source dbms made by the Aliens to prove their mental superiority. They did it.
+PostgreSQL is an Open Source [DBMS](https://en.wikipedia.org/wiki/Database) made by the Aliens to prove their mental superiority. They did it.
 
 PostgreSQL can:
 
@@ -184,11 +187,13 @@ PostgreSQL can:
 - handle push notifications
 - **PERFORM UNIT TESTS AND TDD ON POSTGRES**
 
-With the amount of data that we manage in an average size project / service we could use only PG as data management solution and live happily ever after.
+With the amount of data that we (as Industry) manage in an average size project / service we could use only PG as data management solution and live happily ever after. 
+
+_There are of course exceptions to this bold statement._
 
 Most engineers go through life learning a little bit of many things. My challenge for you is to become a deep expert on this powerful tool and see where it take us.
 
-Suggested materials:
+SUGGESTED MATERIALS:
 
 - [PostgreSQL Bootcamp: Go From Beginner to Advanced, 60+hours](https://www.udemy.com/course/postgresqlmasterclass/)
 - [AmazingPostgres: a personal notebook](https://github.com/marcopeg/amazing-postgresql)
@@ -201,12 +206,13 @@ Please refer to the [State Management & Migrations](#state-management--migration
 ### Serverless Functions
 
 **Serverless Functions** seem to be a cool new tech.  
+
 Or is it?
 
 You hand over a piece of logic - possibly stateless logic - and ask a third party entity to run it for you in connection with API events or Data Events. Simple.
 
 [👉 Well, it's about 40 years that we have this tech.](https://lostechies.com/chadmyers/2010/09/08/a-brief-history-of-programming/)  
-We - as Industry - simply forgot about it.
+**We - as Industry - simply forgot about it.**
 
 Since the ´80s, it is possible to deploy serverless functions into most _DBMS_ such as MSSQL, MySQL, and of course, PostgreSQL.
 
@@ -214,7 +220,7 @@ Since the ´80s, it is possible to deploy serverless functions into most _DBMS_ 
 
 But somehow, today we do exactly that with pieces of code (Node, .NET, Java) that we persist into Cloud Provider's state and trust them to execute it for us.
 
-👉 SO IT SEEMS WE OVERCAME THAT NEGATIVITY TOWARDS SERVERLESS 👈
+👉 SO IT SEEMS WE OVERCAME THAT HICCUPS TOWARDS SERVERLESS 👈
 
 There are two tools that build confidence with Serverless:
 
@@ -230,14 +236,20 @@ Logical reliability is NOT a problem - and it's never been!
 
 **👉 SCALABILITY IS ANOTHER IMPORTANT SUBJECT TO DISCUSS 👈**
 
-When we put logic on the Application Layer (aka: Servers or Cloud provided Serverless Functions) we can leverage on **HORIZONTAL SCALING**.
+When we put logic on the Application Layer (aka: Servers or Cloud provided Serverless Functions) we can leverage on **HORIZONTAL SCALABILITY**.
 
 > When we deploy Serverless Functions in a DBMS we simply CAN NOT SCALE HORIZONTALLY. Period. 
 
 Is it a problem?  
 Maybe yes, maybe no.
 
-Up until approximately 10 years (~2010s), **VERTICAL SCALING WAS BOTH DIFFICULT AND LIMITED**. Not to mention expensive. It wasn't such a good idea to keep scaling up a DBMS Server. Too much work. And the [VERTICAL LIMIT](https://www.imdb.com/title/tt0190865/) wasn't as high as K2.
+Up until approximately 10 years (~2010s), **VERTICAL SCALING WAS BOTH DIFFICULT AND LIMITED**. Not to mention expensive. 
+
+It wasn't such a good idea to keep scaling up a DBMS Server. Too much work. And the [VERTICAL LIMIT wasn't as high as K2](https://www.imdb.com/title/tt0190865/).
+
+---
+
+But then...
 
 > Take me to the magic of the moment  
 > On a glory night  
@@ -245,19 +257,23 @@ Up until approximately 10 years (~2010s), **VERTICAL SCALING WAS BOTH DIFFICULT 
 >
 > [The Wind of Change by Scorpions](https://www.youtube.com/watch?v=n4RjJKxsamQ)
 
-Today (~2020s), the vertical limit is high. Very high. Changing virtual hardware is a highly automated procedure that we delegate to Terraform and similar infra-as-code tools.
+---
 
-A single (or replicated) DBMS machine has the possibility to scale up and match requirements that is simply mind-blowing.
+Today (~2020s), the vertical limit is high. Very high. Changing virtual hardware (CPU, Memory, Disks) is a highly automated procedure that we delegate to Terraform or similar infra-as-code tools.
+
+A single (or replicated) DBMS machine has the possibility to scale up and match requirements that are simply mind-blowing.
 
 **👉 TODAY WE CAN MOVE OUR LOGIC (BACK) TO WHERE IT BELONGS 👈**
 
-After all, business logic has born into DBMS (AS400), then it move out for economical reasons.
+After all, business logic has born into DBMS (AS400), then it moved out for economical reasons.
+
+It's time to move it back, and make a better usage of the savings!
 
 **NOT EVERYTHING BELONGS TO THE DBMS**
 
 Of course, we have a SOlid (pun inteded) responsibility in choosing what belongs to the DBMS and what not:
 
-- ✅ joining related data deefinitely belongs to the DBMS.
+- ✅ joining related data definitely belongs to the DBMS.
 - 🚫 rendering a PDF definitely doesn't belong to he DBMS.
 - 🚧 validating a login and releasing a JWT? Maybe.
 
@@ -270,18 +286,18 @@ As we move logic into the Database Layer we must keep reliability up. Luckily, t
 [PGTap](https://pgtap.org/) is a testing framework for Postgres that is:
 
 - easy to learn and use
-- can run in Docker
+- [can run in Docker](https://github.com/marcopeg/amazing-postgresql/tree/main/testing/unit-tests)
 - can be part of our CI/CD
 
 We can achieve 100% code-coverage for all the business critical data centric logic that we write.
 
-👉 **PLUS:** Tests run in transactions so they are **stateless by design!** 👈
+👉 **PLUS:** Tests run in transactions so they are **STATELESS BY DESIGN!** 👈
 
 ---
 
 ## Hasura.io
 
-[Hasura.io](https://hasura.io/) is a super-charged ORM-like layer that **maps a database schema to a GraphQL API**.
+[Hasura.io](https://hasura.io/) is a super-charged ORM-like layer that **maps a database schema to a GraphQL API**. And much more.
 
 > Do you remember all the code we used to write to expose APIs, validate tokens, match authorization claims and sanitize parameters?
 >
@@ -290,9 +306,9 @@ We can achieve 100% code-coverage for all the business critical data centric log
 Hasura Engine can:
 
 - map multiple PostgreSQL or MSSQL databases and schemas to a GraphQL APIs effectively federating data access
-- manage live data subscriptions via sockets (and fallback)
-- provide **fine-grained data access control** implementing declarative rules
 - manage authentication / authorization via JWT claims or custom authentication services
+- provide **fine-grained data access control** implementing declarative rules
+- manage live data subscriptions via sockets (and fallback)
 - provide a GraphQL API proxy to custom backend services effectively providing **static data-type validation** on REST APIs input/output
 - federate multiple custom backends into a single self-documented GraphQL API
 - federate remote GraphQL schemas
@@ -312,7 +328,7 @@ Suggested materials:
 
 We can use Hasura as our **backend-for-frontend** as so unify how our React App makes server calls.
 
-Most of the **CRUD operations will be described as Hasura rules** effectively removing (or postponing) to write boring and error-prone code.
+Most of the **CRUD operations will be described as Hasura  schema based API calls**, effectively removing (or postponing) to write boring and error-prone code that is costly to write, test and maintain.
 
 We can **proxy any custom service** through Hasura with simple declarative rules that can be automatically propagated to any environment.
 
