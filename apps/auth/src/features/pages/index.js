@@ -1,5 +1,6 @@
 const homePage = require("./home-page");
 const loginPage = require("./login-page");
+const logoutPage = require("./logout-page");
 const tenantsPage = require("./tenants-page");
 
 const authenticate = async (request, reply, next) => {
@@ -22,6 +23,11 @@ module.exports = {
       method: "GET",
       url: "/",
       handler: homePage
+    },
+    {
+      method: "GET",
+      url: "/logout",
+      handler: logoutPage
     },
     {
       method: "GET",
