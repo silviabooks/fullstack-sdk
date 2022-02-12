@@ -5,3 +5,4 @@
 - [ ] Add Unit Tests to the Auth Service
 - [ ] Add Ent-To-End Tests to the Auth Service
 - [ ] Explain development monitored containers (nodemon) and why we need the `depends_on` and `healthcheck` statements in Docker Compose
+- [ ] Run in GitPod.io

@@ -1,0 +1,29 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - name: Docker
+    init: make build
+    command: |
+      make start
+
+ports:
+  - port: 5432
+    onOpen: ignore
+  - port: 5433
+    onOpen: ignore
+  - port: 4000
+    onOpen: ignore
+  - port: 8008
+    onOpen: ignore
+  - port: 8080
+    onOpen: open-preview
+
+vscode:
+  extensions:
+    - dbaeumer.vscode-eslint@2.1.1
+    - esbenp.prettier-vscode@3.20.0
+    - mikestead.dotenv@1.0.1
+    - wayou.vscode-todo-highlight@1.0.4
+    - EditorConfig.EditorConfig@0.14.4
+    - ms-azuretools.vscode-docker
