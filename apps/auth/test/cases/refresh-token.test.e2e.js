@@ -33,6 +33,8 @@ describe("Refresh Token", () => {
     it("Should refresh a valid token", async () => {
       const res = await global.post("/v1/token/refresh", {}, axiosOptions);
       expect(res).toHaveProperty("refreshToken");
+      expect(res).toHaveProperty("sessionToken");
+      expect(res).toHaveProperty("applicationToken");
       expect(res).toHaveProperty("expires");
     });
 
