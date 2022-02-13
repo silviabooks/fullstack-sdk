@@ -84,10 +84,11 @@ const up = async (pg) => {
   await pg.query(`
     CREATE TABLE "public"."session_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(), 
-      "is_valid" BOOL DEFAULT true,
+      "identity_token" uuid NOT NULL,
       "user" TEXT NOT NULL,
       "tenant" TEXT NOT NULL,
       "app" TEXT NOT NULL,
+      "is_valid" BOOL DEFAULT true,
       "created_at" timestamptz NOT NULL DEFAULT NOW(),
       "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y',
       PRIMARY KEY ("id")

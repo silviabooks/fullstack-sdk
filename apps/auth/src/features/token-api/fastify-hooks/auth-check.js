@@ -4,12 +4,14 @@ const VALIDATE_REFRESH_TOKEN = `
     "t2"."id" AS "familyToken",
     LEAST("t1"."expires_at", "t2"."expires_at") AS "expiresAt"
   FROM "public"."refresh_tokens" AS "t1"
-  LEFT JOIN "public"."session_tokens" AS "t2"
-  ON "t1"."session_token" = "t2"."id"
+  LEFT JOIN "public"."session_tokens" AS "t2" ON "t1"."session_token" = "t2"."id"
+  LEFT JOIN "public"."identity_tokens" AS "t3" ON "t2"."identity_token" = "t3"."id"
   WHERE "t1"."id" = $1
     AND "t1"."was_used" = false
     AND "t1"."expires_at" > NOW()
     AND "t2"."is_valid" = true
+    AND "t3"."is_valid" = true
+    AND "t3"."expires_at" > NOW()
   LIMIT 1
 `;
 

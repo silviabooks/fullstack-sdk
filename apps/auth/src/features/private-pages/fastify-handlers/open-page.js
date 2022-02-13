@@ -11,8 +11,10 @@ const GET_REFRESH_TOKEN = `
 WITH 
   session_token AS (
     INSERT INTO "public"."session_tokens"
-      ("user", "tenant", "app") VALUES 
-      ($1, $2, $3) 
+      ("identity_token", "user", "tenant", "app") VALUES 
+      ($1, $2, $3, $4) 
+    ON CONFLICT ON CONSTRAINT "session_tokens_pkey"
+    DO UPDATE SET "created_at" = EXCLUDED."created_at"
     RETURNING "id"
   ),
   refresh_token AS (
@@ -20,38 +22,40 @@ WITH
       ("session_token", "expires_at") VALUES 
       (
         (SELECT "id" from "session_token"),
-        NOW() + $4::interval
+        NOW() + $5::interval
       ) 
     RETURNING "id"
   )
-  SELECT * FROM refresh_token;
+  SELECT "id" AS "delegateToken" FROM refresh_token;
 `;
 
 module.exports = async (request, reply) => {
-  const { uname: user } = request.auth;
+  const { id: identityToken, uname } = request.auth;
   const { tenant, app } = request.params;
 
   // Get the App's URL:
-  const res = await request.pg.query(GET_APP, [app, user, tenant]);
-  if (res.rowCount === 0) {
+  const r1 = await request.pg.query(GET_APP, [app, uname, tenant]);
+  if (r1.rowCount === 0) {
     reply.status(404).send("App not found");
     return;
   }
 
-  // Build a family token:
-  // NOTE: this first refresh token is intended for immediate utilization
+  // Build the Refresh Token:
+  // NOTE: this first Refresh Token is intended for immediate utilization
   //       from the target App as it will be passed down via URI parameter
   //       and it is particularly sensible to leakage.
-  const family = await request.pg.query(GET_REFRESH_TOKEN, [
-    user,
+  //       It takes the name of DELEGATION TOKEN
+  const r2 = await request.pg.query(GET_REFRESH_TOKEN, [
+    identityToken,
+    uname,
     tenant,
     app,
     "5s"
   ]);
-  const token = family.rows[0].id;
 
-  // Build the token payload:
-  const { url } = res.rows[0];
+  // Get data for the template:
+  const { url } = r1.rows[0];
+  const token = r2.rows[0].delegateToken;
 
   reply.type("text/html").send(`
     <script>window.location = "${url}?token=${token}"</script>
