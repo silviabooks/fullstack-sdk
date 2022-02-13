@@ -510,14 +510,15 @@ An implementation of [JSON Web Tokens](https://tools.ietf.org/html/rfc7519).
 
 ## AuthenticationLESS Apps
 
-All the OnePlatform Apps that we build should be **AUTHENTICATION-LESS** meaning that they should receive and persist an existing session that is maintained and secured by a single entity (TS Digital Portal - at the time of writing).
+All the Apps that we build should be **AUTHENTICATION-LESS** meaning that they should receive and persist an existing session that is maintained and secured by a single Authentication Authority.
 
 A very simple technique to achieve acceptable security is [described by Auth0](https://auth0.com/blog/refresh-tokens-what-are-they-and-when-to-use-them/#:~:text=from%20compromised%20tokens.-,Refresh%20Token%20Automatic%20Reuse%20Detection,-Refresh%20tokens%20are) and shown in the following chart.
 
 <img src="./docs/diagrams/authentication-less-flow.svg" style="background:white" />
-<img src="./docs/diagrams/rt-and-at.png"  style="background:white" />
 
 > The trick is that the first Refresh Token is **intended for immediate use** by the client App. It should have a lifespan of a few seconds, maybe a minute.
+>
+> We call it [**DELEGATION TOKEN**](./apps/auth/README.md#the-delegation-token).
 
 This information can be safely forwarded via URI param as a malicious interceptor would:
 
@@ -526,19 +527,19 @@ This information can be safely forwarded via URI param as a malicious intercepto
 
 👉 For a realistic damage to take place, a malicious attacker would have to **refresh the token BEFORE the legitimate bearer** makes her first attempt. In such a case, the attacker would have a valid Access Token in his hands. And that should be short-lived anyway.
 
-This event could be **FURTHERLY MITIGATED** by delaying the First Refresh giving time for a racing condition to take place BEFORE releasing the Access Token.
+💡 This event could be **FURTHERLY MITIGATED** by delaying the First Refresh giving time for a racing condition to take place BEFORE releasing the Access Token.
 
 It would make for a slower First Page Loading Time, but would greatly increase security. With such combination, the only possible way to breach would be in case of a full hijacking of the redirect. Basically a bad guy sitting in front of an authenticated browser. But that's beyond service-to-service security.
 
 <!--
 # https://bramp.github.io/js-sequence-diagrams/
-Note right of TSDigital: Generate a new:\n- Token Family (TF)\n-short-lived Refresh Token (RT)
-TSDigital->App: Send RT
-App->TSDigital: Refresh Access Token (AT)
-Note right of TSDigital: Validate RT against TF + History.\nIf used,  invalidate TF
-Note right of TSDigital: Rotate RT and keep a history\nof expired RT
-TSDigital->App: Send AT + new RT
-App->ServiceX: AT
+Note right of Authentication Authority (AA): Generate a new:\n- Session Token (ST)\n- short-lived Refresh Token (RT)
+Authentication Authority (AA)->App: Send Refresh Token via URI
+App->Authentication Authority (AA): Refresh Access Token (AT) using RT
+Note right of Authentication Authority (AA): Validate RT against ST + History.\nIf used, invalidate ST
+Note right of Authentication Authority (AA): Rotate RT and keep a history\nof expired RTs
+Authentication Authority (AA)->App: Send AT + new long-lived RT
+App->ServiceX: Use Application Token (AT)
 -->
 
 ---

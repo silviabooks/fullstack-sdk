@@ -9,14 +9,15 @@ services:
       context: ./apps/auth
       dockerfile: Dockerfile.dev
     ports:
-      - "${AUTH_PORT:-4000}:8080"
+      - "${AUTH_PORT:-4040}:8080"
     volumes:
       - ./apps/auth/src:/usr/src/app/src:delegated
       - ./apps/auth/package.json:/usr/src/app/package.json
       - ./apps/auth/package-lock.json:/usr/src/app/package-lock.json
     environment:
+      PGSTRING: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@auth-db:5432/postgres
       JWT_SECRET: ${HASURA_JWT_SECRET:-h2leOvdgjwpV0As5L8rZlV3VDVOsOmwk}
-    entrypoint: ["npm", "start"]
+      JWT_DURATION: "5m"
     restart: unless-stopped
     depends_on:
       auth-db:

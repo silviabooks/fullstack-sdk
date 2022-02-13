@@ -11,7 +11,7 @@ const env = envalid.cleanEnv(process.env, {
   //     TEST_URL=http://localhost:xxx npm run test:e2e
   //
   TEST_URL: envalid.url({
-    default: "http://localhost:4000"
+    default: "http://localhost:4040"
   })
 });
 
