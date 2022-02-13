@@ -16,11 +16,12 @@ const up = async (pg) => {
   `);
   await pg.query(`
     CREATE TABLE "public"."identity_tokens" (
-      "id" uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+      "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "user" TEXT NOT NULL,
       "is_valid" BOOL DEFAULT true,
       "created_at" timestamptz NOT NULL DEFAULT NOW(),
-      "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y'
+      "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y',
+      PRIMARY KEY ("id")
     )
   `);
   await pg.query(`
