@@ -7,11 +7,24 @@ const GET_APP = `
   LIMIT 1;
 `;
 
-const GET_TOKEN = `
-  INSERT INTO "public"."family_tokens"
-  ("user", "tenant", "app") VALUES 
-  ($1, $2, $3) 
-  RETURNING "id" AS "x-auth-id";
+const GET_REFRESH_TOKEN = `
+WITH 
+  family_token AS (
+    INSERT INTO "public"."family_tokens"
+      ("user", "tenant", "app") VALUES 
+      ($1, $2, $3) 
+    RETURNING "id"
+  ),
+  refresh_token AS (
+    INSERT INTO "public"."refresh_tokens"
+      ("family_token", "expires_at") VALUES 
+      (
+        (SELECT "id" from "family_token"),
+        NOW() + $4::interval
+      ) 
+    RETURNING "id"
+  )
+  SELECT * FROM refresh_token;
 `;
 
 module.exports = async (request, reply) => {
@@ -26,10 +39,16 @@ module.exports = async (request, reply) => {
   }
 
   // Build a family token:
-  const family = await request.pg.query(GET_TOKEN, [user, tenant, app]);
-  const token = await request.jwt.sign(family.rows[0], {
-    expiresIn: "30s"
-  });
+  // NOTE: this first refresh token is intended for immediate utilization
+  //       from the target App as it will be passed down via URI parameter
+  //       and it is particularly sensible to leakage.
+  const family = await request.pg.query(GET_REFRESH_TOKEN, [
+    user,
+    tenant,
+    app,
+    "5s"
+  ]);
+  const token = family.rows[0].id;
 
   // Build the token payload:
   const { url } = res.rows[0];

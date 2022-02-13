@@ -9,6 +9,7 @@ const servicePg = require("./service-pg");
 const upsertSchema = require("./upsert-schema");
 const publicPages = require("./features/public-pages");
 const privatePages = require("./features/private-pages");
+const tokenApi = require("./features/token-api");
 
 forrest.run({
   // trace: "compact",
@@ -19,5 +20,5 @@ forrest.run({
     servicePg,
     serviceCookie
   ],
-  features: [upsertSchema, publicPages, privatePages]
+  features: [upsertSchema, publicPages, privatePages, tokenApi]
 });

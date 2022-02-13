@@ -131,8 +131,8 @@ const pg = ({ registerAction, registerTargets }) => {
         url: "/pg/query",
         schema: { body: schemaFields },
         handler: (request) => {
-          const { q: sql } = request.body;
-          return request.pg.query(sql);
+          const { q: sql, p: params = [] } = request.body;
+          return request.pg.query(sql, params);
         }
       });
     }
