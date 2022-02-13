@@ -1,4 +1,6 @@
 describe("Tenants Page", () => {
+  beforeEach(global.reset);
+
   it("Should deny access without authentication", async () => {
     const fn = jest.fn();
 

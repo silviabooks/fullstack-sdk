@@ -1,4 +1,6 @@
 describe("Login Page", () => {
+  beforeEach(global.reset);
+
   it("Should return 404 for a non existing user", async () => {
     const fn = jest.fn();
 
