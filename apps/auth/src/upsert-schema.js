@@ -4,11 +4,23 @@ const down = async (pg) => {
 
 const up = async (pg) => {
   await pg.query(`CREATE SCHEMA "public";`);
+  await pg.query(
+    `CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA "public";`
+  );
 
   // USERS
   await pg.query(`
     CREATE TABLE "public"."users" (
       "uname" TEXT NOT NULL PRIMARY KEY
+    )
+  `);
+  await pg.query(`
+    CREATE TABLE "public"."identity_tokens" (
+      "id" uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+      "user" TEXT NOT NULL,
+      "is_valid" BOOL DEFAULT true,
+      "created_at" timestamptz NOT NULL DEFAULT NOW(),
+      "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y'
     )
   `);
   await pg.query(`
@@ -68,7 +80,6 @@ const up = async (pg) => {
   `);
 
   // AUTH DELEGATION
-  await pg.query(`CREATE EXTENSION IF NOT EXISTS pgcrypto;`);
   await pg.query(`
     CREATE TABLE "public"."session_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(), 

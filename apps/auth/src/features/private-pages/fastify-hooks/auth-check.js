@@ -1,9 +1,24 @@
+const VALIDATE_IDENTITY_TOKEN = `
+  SELECT "id", "uname" FROM "public"."identity_tokens" AS "t1"
+  LEFT JOIN "public"."users" AS "t2" ON "t1"."user" = "t2"."uname"
+  WHERE "t1"."id" = $1
+  LIMIT 1
+`;
+
 module.exports = async (request, reply) => {
-  try {
-    const authToken = request.cookies.auth;
-    request.auth = await request.jwt.verify(authToken);
-    // console.log("authenticated as", request.auth);
-  } catch (err) {
-    reply.status(401).send("Access denied");
+  // Validate the Identity Token agains the DB:
+  const { auth: identityToken } = request.cookies;
+  const res = await request.pg.query(VALIDATE_IDENTITY_TOKEN, [identityToken]);
+
+  // Block access for invalid requests:
+  if (!res.rowCount) {
+    reply
+      .status(401)
+      .type("text/html")
+      .send(`<h1>Access denied</h1><a href="/">Login</a>`);
+    return;
   }
+
+  // Decorate the request with the Identity Token informations:
+  request.auth = res.rows[0];
 };

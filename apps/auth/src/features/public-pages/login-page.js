@@ -1,18 +1,27 @@
-const FIND_USER = `SELECT * FROM "public"."users" WHERE "uname" = $1 LIMIT 1`;
+const FIND_USER = `SELECT "uname" FROM "public"."users" WHERE "uname" = $1 LIMIT 1`;
+const LOGIN_USER = `
+  INSERT INTO "public"."identity_tokens" ("user") 
+  VALUES ($1)
+  RETURNING "id"
+`;
 
 module.exports = async (request, reply) => {
+  const { uname } = request.params;
   // Validate username
-  const res = await request.pg.query(FIND_USER, [request.params.uname]);
-  if (res.rowCount !== 1) {
+  const r1 = await request.pg.query(FIND_USER, [uname]);
+  if (r1.rowCount !== 1) {
     reply.code(404).send("User not found");
     return;
   }
 
-  // Produce JWT & send away
-  const jwt = await request.jwt.sign(res.rows[0]);
+  // Produce a new IdentityToken
+  const r2 = await request.pg.query(LOGIN_USER, [uname]);
+  const loginId = r2.rows[0].id;
+
+  // Send out Cookie and Redirect
   reply
     .type("text/html")
-    .setCookie("auth", jwt, {
+    .setCookie("auth", loginId, {
       path: "/",
       httpOnly: true
     })
