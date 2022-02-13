@@ -67,10 +67,10 @@ const up = async (pg) => {
     , ('app2', 'http://localhost:3002')
   `);
 
-  // FAMILY TOKENS
+  // AUTH DELEGATION
   await pg.query(`CREATE EXTENSION IF NOT EXISTS pgcrypto;`);
   await pg.query(`
-    CREATE TABLE "public"."family_tokens" (
+    CREATE TABLE "public"."session_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(), 
       "is_valid" BOOL DEFAULT true,
       "user" TEXT NOT NULL,
@@ -84,7 +84,7 @@ const up = async (pg) => {
   await pg.query(`
     CREATE TABLE "public"."refresh_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(), 
-      "family_token" uuid NOT NULL,
+      "session_token" uuid NOT NULL,
       "was_used" BOOL DEFAULT false NOT NULL,
       "created_at" timestamptz NOT NULL DEFAULT NOW(),
       "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y',

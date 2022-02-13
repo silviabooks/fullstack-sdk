@@ -9,17 +9,17 @@ const GET_APP = `
 
 const GET_REFRESH_TOKEN = `
 WITH 
-  family_token AS (
-    INSERT INTO "public"."family_tokens"
+  session_token AS (
+    INSERT INTO "public"."session_tokens"
       ("user", "tenant", "app") VALUES 
       ($1, $2, $3) 
     RETURNING "id"
   ),
   refresh_token AS (
     INSERT INTO "public"."refresh_tokens"
-      ("family_token", "expires_at") VALUES 
+      ("session_token", "expires_at") VALUES 
       (
-        (SELECT "id" from "family_token"),
+        (SELECT "id" from "session_token"),
         NOW() + $4::interval
       ) 
     RETURNING "id"

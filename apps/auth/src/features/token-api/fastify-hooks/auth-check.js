@@ -4,25 +4,25 @@ const VALIDATE_REFRESH_TOKEN = `
     "t2"."id" AS "familyToken",
     LEAST("t1"."expires_at", "t2"."expires_at") AS "expiresAt"
   FROM "public"."refresh_tokens" AS "t1"
-  LEFT JOIN "public"."family_tokens" AS "t2"
-  ON "t1"."family_token" = "t2"."id"
+  LEFT JOIN "public"."session_tokens" AS "t2"
+  ON "t1"."session_token" = "t2"."id"
   WHERE "t1"."id" = $1
     AND "t1"."was_used" = false
     AND "t1"."expires_at" > NOW()
     AND "t2"."is_valid" = true
   LIMIT 1
-  ;
 `;
 
-const INVALIDATE_FAMILY_TOKEN = `
-  UPDATE "public"."family_tokens" AS "t1"
+const INVALIDATE_SESSION_TOKEN = `
+  UPDATE "public"."session_tokens"
     SET "is_valid" = false
   WHERE "id" IN (
-    SELECT "t1"."family_token" FROM "public"."refresh_tokens" AS "t1"
-    INNER JOIN "public"."family_tokens" AS "t2" ON "t1"."family_token" = "t2"."id"
-    WHERE "t1"."id" = $1 LIMIT 1
+    SELECT "t1"."session_token" FROM "public"."refresh_tokens" AS "t1"
+    INNER JOIN "public"."session_tokens" AS "t2" ON "t1"."session_token" = "t2"."id"
+    WHERE "t1"."id" = $1 
+    LIMIT 1
     FOR UPDATE SKIP LOCKED
-  );
+  )
 `;
 
 module.exports = async (request, reply) => {
@@ -33,14 +33,14 @@ module.exports = async (request, reply) => {
     return;
   }
 
-  // Validate the Refresh Token:
+  // Validate the RefreshToken:
   const res = await request.pg.query(VALIDATE_REFRESH_TOKEN, [authToken]);
   if (res.rowCount === 1) {
     request.auth = res.rows[0];
     return;
   }
 
-  // Invalidate the Family Token:
-  await request.pg.query(INVALIDATE_FAMILY_TOKEN, [authToken]);
+  // Invalidate the SessionToken:
+  await request.pg.query(INVALIDATE_SESSION_TOKEN, [authToken]);
   reply.status(429).send("Access denied");
 };

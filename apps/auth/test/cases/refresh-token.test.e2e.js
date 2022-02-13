@@ -63,8 +63,8 @@ describe("Refresh Token", () => {
             "t2"."is_valid",
             "t1"."was_used"
           FROM "public"."refresh_tokens" AS "t1"
-          LEFT JOIN "public"."family_tokens" AS "t2"
-          ON "t1"."family_token" = "t2"."id"
+          LEFT JOIN "public"."session_tokens" AS "t2"
+          ON "t1"."session_token" = "t2"."id"
           WHERE "t1"."id" = $1
         `,
         p: [axiosOptions.headers["x-auth-id"]]
