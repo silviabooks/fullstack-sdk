@@ -73,3 +73,21 @@ There will be 3 tokens involved in our strategy:
 🔥 A big part of the security of this delegation mechanism (and OAuth2 also) rely on the short-lived AT, **THE SHORTEST THE LIFE, THE SAFER IT GETS**. ut it also puts a higher strain on the AA service whose DBMS that is involved for refreshing the AT.
 
 ## The Delegation Token
+
+The first time that a Refresh Token is released, it is set to a short Time To Live (TTL). It should be just a few seconds.
+
+> This configuration takes the name of **DELEGATION TOKEN** and it is the critical piece of information that will travel from the AC to the 3rd Party App over URI.
+
+The receiving App should promptly refresh this token, getting a long TTL Refresh Token and its first Application Token.
+
+> From now on, it is the App's responsibility to keep the Refresh Token as safe as possibile.
+
+The Delegation Token TTL is the time window in which a potential attacker could steal the token, refresh it first, hence getting access to a valid Application Token.
+
+Even so, **the attack will be short lived** as the App will likely try to refresh the same token within the second, effectively invalidating the Session Token.
+
+👉 Potentially, it the attacker is fast enough, they will gain access to one single Application Token before their Refresh Token becomes useless.
+
+**🔥 IT IS THEREFORE IMPORTANT THAT THE APPLICATION TOKEN IS SHORT LIVED ANYWAY. 🔥**
+
+<img src="../../docs/diagrams/authentication-less-flow.svg" style="background:white" />

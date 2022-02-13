@@ -17,8 +17,7 @@ clean: stop
 	@rm -rf .docker-data
 	@mkdir -p .docker-data
 
-test:
-	@echo "TODO"
+test: test-auth
 
 
 

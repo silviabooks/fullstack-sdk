@@ -17,6 +17,7 @@ services:
     environment:
       PGSTRING: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@auth-db:5432/postgres
       JWT_SECRET: ${HASURA_JWT_SECRET:-h2leOvdgjwpV0As5L8rZlV3VDVOsOmwk}
+      JWT_DURATION: "5m"
     restart: unless-stopped
     depends_on:
       auth-db:

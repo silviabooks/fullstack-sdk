@@ -4,7 +4,7 @@ const refreshToken = require("./fastify-handlers/refresh-token");
 
 const privatePages = (fastify, opts, done) => {
   // Apply auth control
-  fastify.decorateRequest("auth", {});
+  fastify.decorateRequest("auth", null);
   fastify.addHook("preValidation", authCheck);
 
   fastify.route({
