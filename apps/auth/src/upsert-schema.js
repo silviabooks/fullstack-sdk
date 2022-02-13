@@ -18,7 +18,7 @@ const up = async (pg) => {
     CREATE TABLE "public"."identity_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "user" TEXT NOT NULL,
-      "is_valid" BOOL DEFAULT true,
+      "is_valid" BOOL NOT NULL DEFAULT true,
       "created_at" timestamptz NOT NULL DEFAULT NOW(),
       "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y',
       PRIMARY KEY ("id")

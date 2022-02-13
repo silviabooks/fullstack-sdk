@@ -2,6 +2,8 @@ const VALIDATE_IDENTITY_TOKEN = `
   SELECT "id", "uname" FROM "public"."identity_tokens" AS "t1"
   LEFT JOIN "public"."users" AS "t2" ON "t1"."user" = "t2"."uname"
   WHERE "t1"."id" = $1
+    AND "t1"."is_valid" = true
+    AND "t1"."expires_at" > NOW()
   LIMIT 1
 `;
 
