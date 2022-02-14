@@ -539,17 +539,6 @@ This information can be safely forwarded via URI param as a malicious intercepto
 
 It would make for a slower First Page Loading Time, but would greatly increase security. With such combination, the only possible way to breach would be in case of a full hijacking of the redirect. Basically a bad guy sitting in front of an authenticated browser. But that's beyond service-to-service security.
 
-<!--
-# https://bramp.github.io/js-sequence-diagrams/
-Note right of Authentication Authority (AA): Generate a new:\n- Session Token (ST)\n- short-lived Refresh Token (RT)
-Authentication Authority (AA)->App: Send Refresh Token via URI
-App->Authentication Authority (AA): Refresh Access Token (AT) using RT
-Note right of Authentication Authority (AA): Validate RT against ST + History.\nIf used, invalidate ST
-Note right of Authentication Authority (AA): Rotate RT and keep a history\nof expired RTs
-Authentication Authority (AA)->App: Send AT + new long-lived RT
-App->ServiceX: Use Application Token (AT)
--->
-
 ---
 
 ## Implicit Migrations
