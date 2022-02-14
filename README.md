@@ -522,7 +522,7 @@ All the Apps that we build should be **AUTHENTICATION-LESS** meaning that they s
 
 A very simple technique to achieve acceptable security is [described by Auth0](https://auth0.com/blog/refresh-tokens-what-are-they-and-when-to-use-them/#:~:text=from%20compromised%20tokens.-,Refresh%20Token%20Automatic%20Reuse%20Detection,-Refresh%20tokens%20are) and shown in the following chart.
 
-<div style="background:white"><img src="./docs/diagrams/authentication-less-flow.svg" /></div>
+![AuthenticationLESS Flow](./docs/diagrams/authentication-less-flow.svg)
 
 > The trick is that the first Refresh Token is **intended for immediate use** by the client App. It should have a lifespan of a few seconds, maybe a minute.
 >

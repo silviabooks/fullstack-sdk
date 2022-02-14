@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"><svg xmlns="http://www.w3.org/2000/svg" width="874" height="508" xmlns:xlink="http://www.w3.org/1999/xlink"><source><![CDATA[Note right of Authentication Authority (AA): Generate a new:\n- Session Token (ST)\n- short-lived Refresh Token (RT)
+<?xml version="1.0" encoding="utf-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"><svg xmlns="http://www.w3.org/2000/svg" width="874" height="508" xmlns:xlink="http://www.w3.org/1999/xlink" style="background-color:white;"><source><![CDATA[Note right of Authentication Authority (AA): Generate a new:\n- Session Token (ST)\n- short-lived Refresh Token (RT)
 Authentication Authority (AA)->App: Send Refresh Token via URI
 App->Authentication Authority (AA): Refresh Access Token (AT) using RT
 Note right of Authentication Authority (AA): Validate RT against ST + History.\nIf used, invalidate ST

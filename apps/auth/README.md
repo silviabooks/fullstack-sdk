@@ -90,4 +90,4 @@ Even so, **the attack will be short lived** as the App will likely try to refres
 
 **🔥 IT IS THEREFORE IMPORTANT THAT THE APPLICATION TOKEN IS SHORT LIVED ANYWAY. 🔥**
 
-<div style="background:white"><img src="../../docs/diagrams/authentication-less-flow.svg" /></div>
+![AuthenticationLESS Flow](../../docs/diagrams/authentication-less-flow.svg)
