@@ -11,8 +11,8 @@ const GET_REFRESH_TOKEN = `
 WITH 
   session_token AS (
     INSERT INTO "public"."session_tokens"
-      ("identity_token", "user", "tenant", "app") VALUES 
-      ($1, $2, $3, $4) 
+      ("identity_token", "claims") VALUES 
+      ($1, $2) 
     ON CONFLICT ON CONSTRAINT "session_tokens_pkey"
     DO UPDATE SET "created_at" = EXCLUDED."created_at"
     RETURNING "id"
@@ -22,7 +22,7 @@ WITH
       ("session_token", "expires_at") VALUES 
       (
         (SELECT "id" from "session_token"),
-        NOW() + $5::interval
+        NOW() + $3::interval
       ) 
     RETURNING "id"
   )
@@ -47,9 +47,11 @@ module.exports = async (request, reply) => {
   //       It takes the name of DELEGATION TOKEN
   const r2 = await request.pg.query(GET_REFRESH_TOKEN, [
     identityToken,
-    uname,
-    tenant,
-    app,
+    JSON.stringify({
+      uname,
+      tenant,
+      app
+    }),
     "5s"
   ]);
 
