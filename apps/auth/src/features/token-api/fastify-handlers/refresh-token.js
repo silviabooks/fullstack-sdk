@@ -17,38 +17,60 @@ const REFRESH_TOKEN = `
       RETURNING "id", "session_token", "expires_at"
     )
   SELECT
-    "session_token" AS "sessionToken",
-    "id" AS "refreshToken",
-    "expires_at" AS "expires"
-  FROM "refresh_token"
+    "t1"."session_token" AS "sessionToken",
+    "t1"."id" AS "refreshToken",
+    "t1"."expires_at" AS "expires",
+    "t2"."claims" AS "claims"
+  FROM "refresh_token" AS "t1"
+  LEFT JOIN "public"."session_tokens" AS "t2" ON "t1"."session_token" = "t2"."id"
 `;
 
+const buildClaims = (sessionToken, expires, claims) => ({
+  // Write session values first
+  "x-session-token": null,
+  "x-session-expires": null,
+  // Add custom claims:
+  ...Object.keys(claims).reduce(
+    (acc, key) => ({
+      ...acc,
+      [`x-${key}`]: claims[key]
+    }),
+    {}
+  ),
+  // Make sure the session values are the originals:
+  "x-session-token": sessionToken,
+  "x-session-expires": expires
+});
+
 module.exports = async (request, reply) => {
-  const res = await request.pg.query(REFRESH_TOKEN, [
-    request.auth.refreshToken
-  ]);
+  try {
+    const res = await request.pg.query(REFRESH_TOKEN, [
+      request.auth.refreshToken
+    ]);
 
-  // This should be a crazy racing condition
-  // not really sure it is a realistic possibility.
-  if (!res.rowCount) {
-    console.warn("TODO: Invalidate the SessionToken");
-    reply.status(400).send("Failed to refresh the token");
-    return;
-  }
-
-  // Generate the ApplicationToken
-  const { sessionToken, refreshToken, expires } = res.rows[0];
-  const applicationToken = await request.jwt.sign({
-    "x-auth-claims": {
-      "x-auth-session-token": sessionToken,
-      "x-auth-session-expires": expires
+    // This should be a crazy racing condition
+    // not really sure it is a realistic possibility.
+    if (!res.rowCount) {
+      console.warn("TODO: Invalidate the SessionToken");
+      reply.status(400).send("Failed to refresh the token");
+      return;
     }
-  });
 
-  reply.send({
-    sessionToken,
-    refreshToken,
-    applicationToken,
-    expires
-  });
+    // Generate the ApplicationToken
+    const { sessionToken, refreshToken, expires, claims } = res.rows[0];
+    const applicationToken = await request.jwt.sign({
+      "auth/claims": buildClaims(sessionToken, expires, claims)
+    });
+
+    reply.send({
+      sessionToken,
+      refreshToken,
+      applicationToken,
+      expires
+    });
+  } catch (err) {
+    console.log(err.message);
+  }
 };
+
+module.exports.buildClaims = buildClaims;

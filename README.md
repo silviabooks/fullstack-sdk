@@ -622,4 +622,4 @@ The E2E tests must communicate with the running App to perform tests via API cal
 
 The **DEFAULT APP PORT** is hard-coded in `test/templates/e2e/jest.env.js` but you can easily configure it by providing an environmental variable `TEST_URL` via CLI or `.env.development` file.
 
-👉 Environmental files are sourced using [dotenv](https://www.npmjs.com/package/dotenv).
+👉 Environmental files are sourced by the Test Runner using [dotenv](https://www.npmjs.com/package/dotenv).

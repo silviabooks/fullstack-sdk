@@ -33,11 +33,18 @@ describe("Refresh Token", () => {
     });
 
     it("Should refresh a valid token", async () => {
-      const res = await global.post("/v1/token/refresh", {}, axiosOptions);
-      expect(res).toHaveProperty("refreshToken");
-      expect(res).toHaveProperty("sessionToken");
-      expect(res).toHaveProperty("applicationToken");
-      expect(res).toHaveProperty("expires");
+      const r1 = await global.post("/v1/token/refresh", {}, axiosOptions);
+
+      // Validate basic reply:
+      expect(r1).toHaveProperty("refreshToken");
+      expect(r1).toHaveProperty("sessionToken");
+      expect(r1).toHaveProperty("applicationToken");
+      expect(r1).toHaveProperty("expires");
+
+      // Validate the Application Token structure
+      const r2 = await global.jwt.verify(r1.applicationToken);
+      expect(r2).toHaveProperty("auth/claims");
+      expect(r2["auth/claims"]).toHaveProperty("x-session-token");
     });
 
     it("Should invalidate the Family Token when using a burned out token", async () => {
