@@ -154,7 +154,7 @@ services:
     volumes:
       - ./services/migrations:/usr/src/hasura/app
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/postgres
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@hasura-db:5432/postgres
       HASURA_GRAPHQL_ADMIN_SECRET: "${HASURA_ADMIN_SECRET:-hasura}"
       HASURA_GRAPHQL_ENDPOINT: http://127.0.0.1:8080
       HASURA_APPLY_MIGRATIONS: "true"
