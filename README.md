@@ -54,25 +54,26 @@ or click this button to enjoy a **Remote Development Environment**:
   - [The Architectural Role of Hasura](#the-architectural-role-of-hasura)
   - [Migrations & State Management](#migrations--state-management)
   - [Point & Click Configuration](#point--click-configuration)
+- [JSON Web Tokens - JWT.io](#json-web-tokens)
+- [JavaScript](#javascript)
+  - [ForrestJS](#forrestjs)
+  - [Axios](#axios)
+  - [Jsonebtoken](#jsonwebtoken)
+  - [Fastify](#fastify)
+  - [React](#react) \*
 - [State Management Utilities](#state-management-utilities)
   - [make hasura-console](#make-hasura-console)
   - [make hasura-apply](#make-hasura-apply)
   - [make hasura-export](#make-hasura-export)
-- [JSON Web Tokens](#json-web-tokens)
-- [JavaScript](#javascript)
-  - [ForrestJS](#forrestjs)
-  - [Fastify](#fastify)
-  - [Axios](#axios)
-  - [Jsonwebtoken](#jsonwebtoken)
+- [Implicit Migrations](#implicit-migrations)
+  - [Idempotency is Key](#idempotency-is-key)
+  - [Migrations are Immutable](#migrations-are-immutable)
 - [AuthenticationLESS Apps](#authenticationless-apps)
 - [NodeJS Backend App](#nodejs-backend-app)
   - [Files Structure](#files-structure)
   - [Make & DockerCompose Interface](#make--dockercompose-interface)
   - [NPM Interface](#npm-interface)
   - [TDD & Native Tests](#tdd--native-tests)
-- [Implicit Migrations](#implicit-migrations)
-  - [Idempotency is Key](#idempotency-is-key)
-  - [Migrations are Immutable](#migrations-are-immutable)
 
 ---
 
@@ -434,46 +435,13 @@ hasura console
 
 ---
 
-## State Management Utilities
-
-This project setup offers a few utilities that you can use via `docker-compose` and the relative `make` interface.
-
-### make hasura-console
-
-It runs a conteinerized version of the [Hasura Console](https://hasura.io/docs/latest/graphql/core/hasura-cli/hasura_console.html) that will be available at port `9695` and `9693`.
-
-> By default it is configured to apply (at boot time):
->
-> - migrations
-> - metadata
-> - seeds.
-
-👉 **Use this console to keep your local metadata in sync with your clickings.** 👈
-
-> Use the console at:  
-> http://localhost:9695
-
-### make hasura-apply
-
-It runs a coneinerized version of the `hasura ** apply` command.
-
-> By default it is configured to apply:
->
-> - migrations
-> - metadata
-> - seeds.
-
-### make hasura-export
-
-It runs a coneinerized version of the `hasura ** export` command.
-
-> By default it is configured to export only metadata, but you can also use it to generate a full initial migration.
-
 ## JSON Web Tokens
 
 JSON Web Tokens are an open, industry standard [RFC 7519](https://tools.ietf.org/html/rfc7519) method for representing claims securely between two parties.
 
 👉 [JWT.IO allows you to decode, verify and generate JWT](https://jwt.io)
+
+We use JWT
 
 ---
 
@@ -511,13 +479,50 @@ An implementation of [JSON Web Tokens](https://tools.ietf.org/html/rfc7519).
 
 ---
 
+## State Management Utilities
+
+This project setup offers a few utilities that you can use via `docker-compose` and the relative `make` interface.
+
+### make hasura-console
+
+It runs a conteinerized version of the [Hasura Console](https://hasura.io/docs/latest/graphql/core/hasura-cli/hasura_console.html) that will be available at port `9695` and `9693`.
+
+> By default it is configured to apply (at boot time):
+>
+> - migrations
+> - metadata
+> - seeds.
+
+👉 **Use this console to keep your local metadata in sync with your clickings.** 👈
+
+> Use the console at:  
+> http://localhost:9695
+
+### make hasura-apply
+
+It runs a coneinerized version of the `hasura ** apply` command.
+
+> By default it is configured to apply:
+>
+> - migrations
+> - metadata
+> - seeds.
+
+### make hasura-export
+
+It runs a coneinerized version of the `hasura ** export` command.
+
+> By default it is configured to export only metadata, but you can also use it to generate a full initial migration.
+
+---
+
 ## AuthenticationLESS Apps
 
 All the Apps that we build should be **AUTHENTICATION-LESS** meaning that they should receive and persist an existing session that is maintained and secured by a single Authentication Authority.
 
 A very simple technique to achieve acceptable security is [described by Auth0](https://auth0.com/blog/refresh-tokens-what-are-they-and-when-to-use-them/#:~:text=from%20compromised%20tokens.-,Refresh%20Token%20Automatic%20Reuse%20Detection,-Refresh%20tokens%20are) and shown in the following chart.
 
-<img src="./docs/diagrams/authentication-less-flow.svg" style="background:white" />
+<div style="background:white"><img src="./docs/diagrams/authentication-less-flow.svg" /></div>
 
 > The trick is that the first Refresh Token is **intended for immediate use** by the client App. It should have a lifespan of a few seconds, maybe a minute.
 >
@@ -544,6 +549,36 @@ Note right of Authentication Authority (AA): Rotate RT and keep a history\nof ex
 Authentication Authority (AA)->App: Send AT + new long-lived RT
 App->ServiceX: Use Application Token (AT)
 -->
+
+---
+
+## Implicit Migrations
+
+We usually deal with **schema maintenance** by applying migrations to a running database.
+
+Hasura has [its own migration utility](https://hasura.io/docs/latest/graphql/core/migrations/index.html) that facilitates distributing migrations (and seeds) to multiple databases at once, or independently.
+
+> But when we deal with **REAL MICRO-SERVICEs** that handles a very small piece of state, such state become usually very stable.
+>
+> 👉 As it is in the case of the Auth Service in this Project.
+
+In this case, I suggest to use **IMPLICIT MIGRATIONS** that is running **🔥 IDEMPOTENT SCHEMA INSTRUCTIONS 🔥** at the service's boot.
+
+This approach guarantee that every service is responsible for applying its own schema and seed data every time it gets deployed.
+
+### Idempotency is Key
+
+When running idempotent instructions, it doesn't really matter if multiple services will race at boot time. Idempotency will guarantee that structures and data are built only once.
+
+When it comes to PostgreSQL we can leverage modifiers as in `IF NOT EXISTS` or `ON CONFLICT ... DO NOTHING` to easily achieve idempotency.
+
+### Migrations are Immutable
+
+Another important principle is that you can't change previously issued instructions.
+
+> Say you created a table, deployed, and now want to add a new field.
+
+You simply EXTEND your implicit migration by appending an `ALTER TABLE` statement to it. And that's the same approach you would use in much more complex migrations setups.
 
 ---
 
@@ -626,35 +661,5 @@ The E2E tests must communicate with the running App to perform tests via API cal
 The **DEFAULT APP PORT** is hard-coded in `test/templates/e2e/jest.env.js` but you can easily configure it by providing an environmental variable `TEST_URL` via CLI or `.env.development` file.
 
 👉 Environmental files are sourced by the Test Runner using [dotenv](https://www.npmjs.com/package/dotenv).
-
----
-
-## Implicit Migrations
-
-We usually deal with **schema maintenance** by applying migrations to a running database.
-
-Hasura has [its own migration utility](https://hasura.io/docs/latest/graphql/core/migrations/index.html) that facilitates distributing migrations (and seeds) to multiple databases at once, or independently.
-
-> But when we deal with **REAL MICRO-SERVICEs** that handles a very small piece of state, such state become usually very stable.
->
-> 👉 As it is in the case of the Auth Service in this Project.
-
-In this case, I suggest to use **IMPLICIT MIGRATIONS** that is running **🔥 IDEMPOTENT SCHEMA INSTRUCTIONS 🔥** at the service's boot.
-
-This approach guarantee that every service is responsible for applying its own schema and seed data every time it gets deployed.
-
-### Idempotency is Key
-
-When running idempotent instructions, it doesn't really matter if multiple services will race at boot time. Idempotency will guarantee that structures and data are built only once.
-
-When it comes to PostgreSQL we can leverage modifiers as in `IF NOT EXISTS` or `ON CONFLICT ... DO NOTHING` to easily achieve idempotency.
-
-### Migrations are Immutable
-
-Another important principle is that you can't change previously issued instructions.
-
-> Say you created a table, deployed, and now want to add a new field.
-
-You simply EXTEND your implicit migration by appending an `ALTER TABLE` statement to it. And that's the same approach you would use in much more complex migrations setups.
 
 ---
