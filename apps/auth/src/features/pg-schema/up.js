@@ -1,16 +1,33 @@
-module.exports = async (pg) => {
-  await pg.query(`CREATE SCHEMA IF NOT EXISTS "public";`);
-  await pg.query(
-    `CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA "public";`
-  );
+module.exports = (pg) =>
+  pg.query(`
+    BEGIN;
 
-  // USERS
-  await pg.query(`
+    CREATE SCHEMA IF NOT EXISTS "public";
+    CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA "public";
+
     CREATE TABLE IF NOT EXISTS "public"."users" (
       "uname" TEXT NOT NULL PRIMARY KEY
-    )
-  `);
-  await pg.query(`
+    );
+
+    CREATE TABLE IF NOT EXISTS "public"."tenants" (
+      "user" TEXT NOT NULL,
+      "tenant" TEXT NOT NULL,
+      PRIMARY KEY ( "user", "tenant" )
+    );
+
+    CREATE TABLE IF NOT EXISTS "public"."catalog" (
+      "user" TEXT NOT NULL,
+      "tenant" TEXT NOT NULL,
+      "name" TEXT NOT NULL,
+      PRIMARY KEY ( "user", "tenant", "name" )
+    );
+
+    CREATE TABLE IF NOT EXISTS "public"."apps" (
+      "name" TEXT NOT NULL,
+      "url" TEXT NOT NULL,
+      PRIMARY KEY ( "name" )
+    );
+
     CREATE TABLE IF NOT EXISTS "public"."identity_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "user" TEXT NOT NULL,
@@ -18,39 +35,8 @@ module.exports = async (pg) => {
       "created_at" timestamptz NOT NULL DEFAULT NOW(),
       "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y',
       PRIMARY KEY ("id")
-    )
-  `);
+    );
 
-  // TENANTS
-  await pg.query(`
-    CREATE TABLE IF NOT EXISTS "public"."tenants" (
-      "user" TEXT NOT NULL,
-      "tenant" TEXT NOT NULL,
-      PRIMARY KEY ( "user", "tenant" )
-    )
-  `);
-
-  // CATALOG
-  await pg.query(`
-    CREATE TABLE IF NOT EXISTS "public"."catalog" (
-      "user" TEXT NOT NULL,
-      "tenant" TEXT NOT NULL,
-      "name" TEXT NOT NULL,
-      PRIMARY KEY ( "user", "tenant", "name" )
-    )
-  `);
-
-  // APPS
-  await pg.query(`
-    CREATE TABLE IF NOT EXISTS "public"."apps" (
-      "name" TEXT NOT NULL,
-      "url" TEXT NOT NULL,
-      PRIMARY KEY ( "name" )
-    )
-  `);
-
-  // AUTH DELEGATION
-  await pg.query(`
     CREATE TABLE IF NOT EXISTS "public"."session_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "identity_token" uuid NOT NULL,
@@ -60,8 +46,7 @@ module.exports = async (pg) => {
       "claims" JSON NOT NULL DEFAULT '{}',
       PRIMARY KEY ("id")
     );
-  `);
-  await pg.query(`
+
     CREATE TABLE IF NOT EXISTS "public"."refresh_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "session_token" uuid NOT NULL,
@@ -70,5 +55,6 @@ module.exports = async (pg) => {
       "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y',
       PRIMARY KEY ("id")
     );
-  `);
-};
+
+    COMMIT;
+`);

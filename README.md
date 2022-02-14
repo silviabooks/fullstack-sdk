@@ -70,6 +70,9 @@ or click this button to enjoy a **Remote Development Environment**:
   - [Make & DockerCompose Interface](#make--dockercompose-interface)
   - [NPM Interface](#npm-interface)
   - [TDD & Native Tests](#tdd--native-tests)
+- [Implicit Migrations](#implicit-migrations)
+  - [Idempotency is Key](#idempotency-is-key)
+  - [Migrations are Immutable](#migrations-are-immutable)
 
 ---
 
@@ -248,7 +251,7 @@ SUGGESTED MATERIALS:
 
 ### Schema Management & Migrations
 
-Please refer to the [State Management & Migrations](#state-management--migrations) section.
+Please refer to the [State Management & Migrations](#state-management--migrations) section, and also have a read to the [Implicit Migrations](#implicit-migrations) proposal.
 
 ### Serverless Functions
 
@@ -623,3 +626,35 @@ The E2E tests must communicate with the running App to perform tests via API cal
 The **DEFAULT APP PORT** is hard-coded in `test/templates/e2e/jest.env.js` but you can easily configure it by providing an environmental variable `TEST_URL` via CLI or `.env.development` file.
 
 👉 Environmental files are sourced by the Test Runner using [dotenv](https://www.npmjs.com/package/dotenv).
+
+---
+
+## Implicit Migrations
+
+We usually deal with **schema maintenance** by applying migrations to a running database.
+
+Hasura has [its own migration utility](https://hasura.io/docs/latest/graphql/core/migrations/index.html) that facilitates distributing migrations (and seeds) to multiple databases at once, or independently.
+
+> But when we deal with **REAL MICRO-SERVICEs** that handles a very small piece of state, such state become usually very stable.
+>
+> 👉 As it is in the case of the Auth Service in this Project.
+
+In this case, I suggest to use **IMPLICIT MIGRATIONS** that is running **🔥 IDEMPOTENT SCHEMA INSTRUCTIONS 🔥** at the service's boot.
+
+This approach guarantee that every service is responsible for applying its own schema and seed data every time it gets deployed.
+
+### Idempotency is Key
+
+When running idempotent instructions, it doesn't really matter if multiple services will race at boot time. Idempotency will guarantee that structures and data are built only once.
+
+When it comes to PostgreSQL we can leverage modifiers as in `IF NOT EXISTS` or `ON CONFLICT ... DO NOTHING` to easily achieve idempotency.
+
+### Migrations are Immutable
+
+Another important principle is that you can't change previously issued instructions.
+
+> Say you created a table, deployed, and now want to add a new field.
+
+You simply EXTEND your implicit migration by appending an `ALTER TABLE` statement to it. And that's the same approach you would use in much more complex migrations setups.
+
+---
