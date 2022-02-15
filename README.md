@@ -541,6 +541,14 @@ it("Should throw when given the wrong values");
 
 By using the form `it()` we have no choice but referring to the subject that is provided by the nearest `describe()`. It forces us to **SCOPE OUR TEST CASES** by combining multiple `describe()` blocks, enhancing clarity, SRP, and test segregation.
 
+### Tests Drive Development
+
+Not the other way around.
+
+When you start writing a test for a piece of App that does not exists yet you are forced to focus on its API.
+
+It doesn't matter if you are performing a Unit Test or an End-to-End test, you will ha
+
 ---
 
 ## State Management Utilities
