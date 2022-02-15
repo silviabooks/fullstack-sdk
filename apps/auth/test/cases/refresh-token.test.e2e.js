@@ -1,4 +1,4 @@
-describe("Refresh Token", () => {
+describe("Refresh Token API", () => {
   beforeEach(global.reset);
 
   it("Should deny access without authentication", async () => {
@@ -14,8 +14,9 @@ describe("Refresh Token", () => {
     expect(fn.mock.calls[0][0].response.status).toBe(401);
   });
 
-  describe("with login", () => {
+  describe("With login", () => {
     let axiosOptions = null;
+    let refreshToken = null;
 
     beforeEach(async () => {
       // Get a valid Identity Token:
@@ -28,64 +29,90 @@ describe("Refresh Token", () => {
           Cookie: `${authCookie};`
         }
       });
-      const token = res.split(`"`)[1].split("=")[1];
-      axiosOptions = { headers: { "x-auth-id": token } };
+      refreshToken = res.split(`"`)[1].split("=")[1];
+      axiosOptions = { headers: { "x-refresh-token": refreshToken } };
     });
 
     it("Should refresh a valid token", async () => {
-      const r1 = await global.post("/v1/token/refresh", {}, axiosOptions);
-
+      const r1 = await global.rawPost.debug(
+        "/v1/token/refresh",
+        {},
+        axiosOptions
+      );
       // Validate basic reply:
-      expect(r1).toHaveProperty("refreshToken");
-      expect(r1).toHaveProperty("sessionToken");
-      expect(r1).toHaveProperty("applicationToken");
-      expect(r1).toHaveProperty("expires");
+      expect(r1.data).toHaveProperty("applicationToken");
+      expect(r1.data).toHaveProperty("expires");
+
+      // It should send the refresh token as http only cookie
+      const refreshTokenCookie = r1.headers["set-cookie"].find(($) =>
+        $.includes("x-refresh-token")
+      );
+      expect(refreshTokenCookie).toContain("HttpOnly");
+      const newRefreshToken = refreshTokenCookie
+        .split(";")
+        .shift()
+        .split("=")
+        .pop();
+      expect(newRefreshToken).toBeDefined();
 
       // Validate the Application Token structure
-      const r2 = await global.jwt.verify(r1.applicationToken);
+      const r2 = await global.jwt.verify(r1.data.applicationToken);
       expect(r2).toHaveProperty("auth/claims");
       expect(r2["auth/claims"]).toHaveProperty("x-session-token");
     });
 
-    it("Should invalidate the Family Token when using a burned out token", async () => {
-      const fn = jest.fn();
+    describe("Racing the Refresh Token", () => {
+      // Make the first refresh call
+      beforeEach(() => global.post("/v1/token/refresh", {}, axiosOptions));
 
-      // First refresh should work
-      await global.post("/v1/token/refresh", {}, axiosOptions);
-      // console.log(res);
+      it("Should invalidate the Session Token", async () => {
+        const fn = jest.fn();
 
-      // Second refresh should fail
-      try {
-        await global.post("/v1/token/refresh", {}, axiosOptions);
-      } catch (err) {
-        fn(err);
-      }
+        // Second refresh should fail
+        try {
+          await global.post("/v1/token/refresh", {}, axiosOptions);
+        } catch (err) {
+          fn(err);
+        }
 
-      // Check the proper response
-      expect(fn.mock.calls.length).toBe(1);
-      expect(fn.mock.calls[0][0].response).toHaveProperty("status", 429);
-      // console.log(fn.mock.calls[0][0].response.data);
+        // Check the proper response
+        expect(fn.mock.calls.length).toBe(1);
+        expect(fn.mock.calls[0][0].response).toHaveProperty("status", 428);
+        // console.log(fn.mock.calls[0][0].response.data);
 
-      // Verify that the Family Token is invalidated
-      const res = await global.testPost.debug("/pg/query", {
-        q: `
+        // Verify that the Family Token is invalidated
+        const r1 = await global.testPost.debug("/pg/query", {
+          q: `
           SELECT 
-            "t2"."id",
-            "t2"."is_valid",
-            "t1"."was_used"
+            "t1"."is_valid" AS "refresh_is_valid",
+            "t2"."is_valid" AS "session_is_valid"
           FROM "public"."refresh_tokens" AS "t1"
           LEFT JOIN "public"."session_tokens" AS "t2"
           ON "t1"."session_token" = "t2"."id"
           WHERE "t1"."id" = $1
         `,
-        p: [axiosOptions.headers["x-auth-id"]]
+          p: [refreshToken]
+        });
+
+        // First token should be burned
+        expect(r1.rows[0].refresh_is_valid).toBe(false);
+
+        // Family token should be burned
+        expect(r1.rows[0].session_is_valid).toBe(false);
+
+        // There should be no valid refresh tokens for the session
+        const r2 = await global.testPost.debug("/pg/query", {
+          q: `
+          SELECT * FROM "public"."refresh_tokens"
+          WHERE "is_valid" = true AND "session_token" IN (
+            SELECT "session_token" FROM "public"."refresh_tokens"
+            WHERE "id" = $1
+          )
+        `,
+          p: [refreshToken]
+        });
+        expect(r2.rowCount).toBe(0);
       });
-
-      // First token should be burned
-      expect(res.rows[0].was_used).toBe(true);
-
-      // Family token should be burned
-      expect(res.rows[0].is_valid).toBe(false);
     });
   });
 });
