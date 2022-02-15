@@ -31,7 +31,7 @@ describe("Verify Token", () => {
       // Get a valid Delegation Token:
       const res = await global.get("/open/t1/app1", {
         headers: {
-          Cookie: `auth=${identityToken};`
+          Cookie: `x-identity-token=${identityToken};`
         }
       });
       refreshToken = res.split(`"`)[1].split("=")[1];

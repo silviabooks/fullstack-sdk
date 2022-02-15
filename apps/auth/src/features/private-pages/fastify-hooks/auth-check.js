@@ -9,7 +9,7 @@ const VALIDATE_IDENTITY_TOKEN = `
 
 module.exports = async (request, reply) => {
   // Validate the Identity Token agains the DB:
-  const { auth: identityToken } = request.cookies;
+  const identityToken = request.cookies["x-identity-token"];
   const res = await request.pg.query(VALIDATE_IDENTITY_TOKEN, [identityToken]);
 
   // Block access for invalid requests:

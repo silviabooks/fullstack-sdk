@@ -39,7 +39,7 @@ module.exports = async (request, reply) => {
   // Send out Cookie and Redirect
   reply
     .type("text/html")
-    .setCookie("auth", identityToken, {
+    .setCookie("x-identity-token", identityToken, {
       path: "/",
       httpOnly: true
     })
