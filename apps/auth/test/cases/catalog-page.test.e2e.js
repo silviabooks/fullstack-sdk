@@ -1,5 +1,5 @@
 describe("Catalog Page", () => {
-  beforeEach(global.reset);
+  beforeAll(global.reset);
 
   it("Should deny access without authentication", async () => {
     const fn = jest.fn();
@@ -16,7 +16,7 @@ describe("Catalog Page", () => {
 
   describe("with login", () => {
     let axiosOptions = null;
-    beforeEach(async () => {
+    beforeAll(async () => {
       const login = await global.rawGet("/login/luke", {
         withCredentials: true
       });

@@ -2,7 +2,7 @@ const REFRESH_TOKEN = `
   WITH 
     "burn_token" AS (
       UPDATE "public"."refresh_tokens"
-        SET "was_used" = true
+        SET "is_valid" = false
       WHERE "id" IN (
         SELECT "id" FROM "public"."refresh_tokens"
         WHERE "id" = $1
@@ -63,13 +63,13 @@ module.exports = async (request, reply) => {
     });
 
     reply.send({
-      sessionToken,
       refreshToken,
       applicationToken,
       expires
     });
   } catch (err) {
     console.log(err.message);
+    reply.status(500).send(err.message);
   }
 };
 

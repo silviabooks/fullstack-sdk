@@ -32,27 +32,27 @@ module.exports = (pg) =>
       "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "user" TEXT NOT NULL,
       "is_valid" BOOL NOT NULL DEFAULT true,
-      "created_at" timestamptz NOT NULL DEFAULT NOW(),
       "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y',
+      "created_at" timestamptz NOT NULL DEFAULT NOW(),
       PRIMARY KEY ("id")
     );
 
     CREATE TABLE IF NOT EXISTS "public"."session_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "identity_token" uuid NOT NULL,
-      "is_valid" BOOL DEFAULT true,
-      "created_at" timestamptz NOT NULL DEFAULT NOW(),
-      "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y',
       "claims" JSON NOT NULL DEFAULT '{}',
+      "is_valid" BOOL DEFAULT true,
+      "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y',
+      "created_at" timestamptz NOT NULL DEFAULT NOW(),
       PRIMARY KEY ("id")
     );
 
     CREATE TABLE IF NOT EXISTS "public"."refresh_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "session_token" uuid NOT NULL,
-      "was_used" BOOL DEFAULT false NOT NULL,
-      "created_at" timestamptz NOT NULL DEFAULT NOW(),
+      "is_valid" BOOL DEFAULT true NOT NULL,
       "expires_at" timestamptz NOT NULL DEFAULT NOW() + INTERVAL '100y',
+      "created_at" timestamptz NOT NULL DEFAULT NOW(),
       PRIMARY KEY ("id")
     );
 
