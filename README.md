@@ -61,6 +61,8 @@ or click this button to enjoy a **Remote Development Environment**:
   - [Jsonebtoken](#jsonwebtoken)
   - [Fastify](#fastify)
   - [React](#react) \*
+- [TDD - Test Driven Development](#tdd---test-driven-development)
+  - [Pair Programming & TDD Cycle](#pair-programming--tdd-cycle)
 - [State Management Utilities](#state-management-utilities)
   - [make hasura-console](#make-hasura-console)
   - [make hasura-apply](#make-hasura-apply)
@@ -476,6 +478,68 @@ Promise based HTTP client for the browser and node.js
 An implementation of [JSON Web Tokens](https://tools.ietf.org/html/rfc7519).
 
 👉 [Go to docs](https://github.com/auth0/node-jsonwebtoken)
+
+---
+
+## TDD - Test Driven Development
+
+We should strive to use Test Driven Development (TDD) and Pair Programming as the simple way to avoid the most common pitfalls of our Industry:
+
+- **THE LOCAL STATE**
+  - interpreter version
+  - locally installed CLI utilities
+  - data that was created manually
+- external dependencies ([Impure Functions](https://dev.to/sanspanic/pure-vs-impure-functions-50aj))
+- poor naming for variables and functions
+- convoluted logic
+- convoluted folder structure
+- misspelling names
+
+All these are **UNNECESSARY EVILS** that must be fought and beaten at any cost. Behind the luring speed of "just get coding" we hide the **immense maintenance costs of most legacy projects**.
+
+### Pair Programming & TDD Cycle
+
+TDD produces the best results when performed in [Pair Programming](https://en.wikipedia.org/wiki/Pair_programming) (PP), and PP produces the best Team results when the participants to a session change frequently and are at **DIFFERENT SENIORITY LEVELS**.
+
+The Cycle between Jack and Jane should look like this:
+
+![tdd-session-in-pair-programming-jack](./docs/diagrams/tdd-session-in-pair-programming-jack.svg)
+
+Then both Jack and Jane take a coffe...
+
+... and get back to work:
+
+![tdd-session-in-pair-programming-jane](./docs/diagrams/tdd-session-in-pair-programming-jane.svg)
+
+It is clear that Jack an Jane keep on **ALTERNATING ROLES** during a TDD Session. This practice **FORCES THEM TO COMMUNICATE** and explaining with words each others' ideas. It leads to better choiches and real-time code review.
+
+I'll repeat: this process yields the best results when **PAIRING DIFFERENT SENIORITY LEVELS**.
+
+**🔥 THE ALTERNATION OF THE ROLES MAKES PAIR PROGRAMMING A WINNER PRACTICE 🔥**
+
+### Test VS It Should
+
+Most test suite provide the basic API:
+
+- describe
+- test / it
+
+Where `test()` and `it()` are interchangable synonyms. So why bother with choosing one over the other?
+
+Consider the following example:
+
+```js
+describe("My Sum function");
+test("That it should return A + B");
+test("That throws if given the wrong arguments");
+
+describe("My Sum function");
+it("Should return A + B");
+describe("arguments");
+it("Should throw when given the wrong values");
+```
+
+By using the form `it()` we have no choice but referring to the subject that is provided by the nearest `describe()`. It forces us to **SCOPE OUR TEST CASES** by combining multiple `describe()` blocks, enhancing clarity, SRP, and test segregation.
 
 ---
 
