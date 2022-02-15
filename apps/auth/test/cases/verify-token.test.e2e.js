@@ -35,11 +35,24 @@ describe("Verify Token", () => {
         }
       });
       refreshToken = res.split(`"`)[1].split("=")[1];
-      axiosOptions = { headers: { "x-auth-id": refreshToken } };
+      axiosOptions = { headers: { "x-refresh-token": refreshToken } };
     });
 
-    it("Should verity a valid Refresh Token", async () => {
+    it("Should verify a valid Refresh Token sent over headers", async () => {
       const res = await global.post("/v1/token/verify", {}, axiosOptions);
+      expect(res).toHaveProperty("expires");
+    });
+
+    it("Should verify a valid Refresh Token sent over a cookie", async () => {
+      const res = await global.post(
+        "/v1/token/verify",
+        {},
+        {
+          headers: {
+            Cookie: `x-refresh-token=${refreshToken};`
+          }
+        }
+      );
       expect(res).toHaveProperty("expires");
     });
 

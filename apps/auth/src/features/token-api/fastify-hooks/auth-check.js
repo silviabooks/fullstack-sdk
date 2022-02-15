@@ -43,7 +43,9 @@ SELECT * FROM "invalidate_session_tokens"
 
 module.exports = async (request, reply) => {
   // Get the Refresh Token from the headers:
-  const authToken = request.headers["x-auth-id"];
+  // (straight header or cookie)
+  const authToken =
+    request.headers["x-refresh-token"] || request.cookies["x-refresh-token"];
   if (!authToken) {
     reply.status(401).send("Access denied - authentication not found");
     return;

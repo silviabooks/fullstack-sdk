@@ -62,11 +62,16 @@ module.exports = async (request, reply) => {
       "auth/claims": buildClaims(sessionToken, expires, claims)
     });
 
-    reply.send({
-      refreshToken,
-      applicationToken,
-      expires
-    });
+    reply
+      .setCookie("x-refresh-token", refreshToken, {
+        path: "/",
+        httpOnly: true
+      })
+      .send({
+        // refreshToken,
+        applicationToken,
+        expires
+      });
   } catch (err) {
     console.log(err.message);
     reply.status(500).send(err.message);

@@ -30,18 +30,33 @@ describe("Refresh Token API", () => {
         }
       });
       refreshToken = res.split(`"`)[1].split("=")[1];
-      axiosOptions = { headers: { "x-auth-id": refreshToken } };
+      axiosOptions = { headers: { "x-refresh-token": refreshToken } };
     });
 
     it("Should refresh a valid token", async () => {
-      const r1 = await global.post.debug("/v1/token/refresh", {}, axiosOptions);
+      const r1 = await global.rawPost.debug(
+        "/v1/token/refresh",
+        {},
+        axiosOptions
+      );
       // Validate basic reply:
-      expect(r1).toHaveProperty("refreshToken");
-      expect(r1).toHaveProperty("applicationToken");
-      expect(r1).toHaveProperty("expires");
+      expect(r1.data).toHaveProperty("applicationToken");
+      expect(r1.data).toHaveProperty("expires");
+
+      // It should send the refresh token as http only cookie
+      const refreshTokenCookie = r1.headers["set-cookie"].find(($) =>
+        $.includes("x-refresh-token")
+      );
+      expect(refreshTokenCookie).toContain("HttpOnly");
+      const newRefreshToken = refreshTokenCookie
+        .split(";")
+        .shift()
+        .split("=")
+        .pop();
+      expect(newRefreshToken).toBeDefined();
 
       // Validate the Application Token structure
-      const r2 = await global.jwt.verify(r1.applicationToken);
+      const r2 = await global.jwt.verify(r1.data.applicationToken);
       expect(r2).toHaveProperty("auth/claims");
       expect(r2["auth/claims"]).toHaveProperty("x-session-token");
     });
