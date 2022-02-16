@@ -3,9 +3,8 @@ const tenantsPage = require("./fastify-handlers/tenants-page");
 const catalogPage = require("./fastify-handlers/catalog-page");
 const openPage = require("./fastify-handlers/open-page");
 
-const privatePages = (fastify, opts, done) => {
+const privatePages = async (fastify, opts) => {
   fastify.decorateRequest("auth", null);
-
   fastify.addHook("preValidation", authCheck);
 
   fastify.route({
@@ -25,8 +24,6 @@ const privatePages = (fastify, opts, done) => {
     url: "/open/:tenant/:app",
     handler: openPage
   });
-
-  done();
 };
 
 module.exports = {

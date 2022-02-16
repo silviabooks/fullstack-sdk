@@ -8,25 +8,25 @@ const GET_APP = `
 `;
 
 const GET_REFRESH_TOKEN = `
-WITH 
-  session_token AS (
-    INSERT INTO "public"."session_tokens"
-      ("identity_token", "claims") VALUES 
-      ($1, $2) 
-    ON CONFLICT ON CONSTRAINT "session_tokens_pkey"
-    DO UPDATE SET "created_at" = EXCLUDED."created_at"
-    RETURNING "id"
-  ),
-  refresh_token AS (
-    INSERT INTO "public"."refresh_tokens"
-      ("session_token", "expires_at") VALUES 
-      (
-        (SELECT "id" from "session_token"),
-        NOW() + $3::interval
-      ) 
-    RETURNING "id"
-  )
-  SELECT "id" AS "delegateToken" FROM refresh_token;
+  WITH 
+    session_token AS (
+      INSERT INTO "public"."session_tokens"
+        ("identity_token", "claims") VALUES 
+        ($1, $2) 
+      ON CONFLICT ON CONSTRAINT "session_tokens_pkey"
+      DO UPDATE SET "created_at" = EXCLUDED."created_at"
+      RETURNING "id"
+    ),
+    refresh_token AS (
+      INSERT INTO "public"."refresh_tokens"
+        ("session_token", "expires_at") VALUES 
+        (
+          (SELECT "id" from "session_token"),
+          NOW() + $3::interval
+        ) 
+      RETURNING "id"
+    )
+    SELECT "id" AS "delegateToken" FROM refresh_token;
 `;
 
 module.exports = async (request, reply) => {
@@ -40,6 +40,24 @@ module.exports = async (request, reply) => {
     return;
   }
 
+  // Get all the tenants
+  const tenants = await request.pg.query(
+    `
+    SELECT "tenant" FROM "public"."tenants"
+    WHERE "user" = $1
+  `,
+    [uname]
+  );
+
+  // Get all the apps
+  const apps = await request.pg.query(
+    `
+    SELECT "name" FROM "public"."catalog"
+    WHERE "user" = $1
+  `,
+    [uname]
+  );
+
   // Build the Refresh Token:
   // NOTE: this first Refresh Token is intended for immediate utilization
   //       from the target App as it will be passed down via URI parameter
@@ -49,10 +67,10 @@ module.exports = async (request, reply) => {
     identityToken,
     JSON.stringify({
       uname,
-      tenant,
-      app
+      tenant: tenants.rows.map(($) => $.tenant),
+      app: apps.rows.map(($) => $.name)
     }),
-    "5s"
+    "1m"
   ]);
 
   // Get data for the template:
