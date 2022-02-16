@@ -11,7 +11,7 @@ This repository collects a few components that help you build a modern Web Appli
 
 ## Start Coding
 
-The following commands have been tested on MacOSX with Docker and on GitPod.  
+The following commands have been tested on MacOSX, Windows running WSL2 with Docker and on GitPod.  
 You need `Docker` to be up and running on your system.
 
 ```bash
@@ -23,6 +23,8 @@ make stop
 # (it will also rebuild all the containers)
 make reset
 ```
+
+*Note: If you encounter failure when running the `make start` , ensure that you have disabled `buildkit` option. Which is located inside Docker Desktop application -> Settings -> Docker Engine and set `"buildkit": true` to `"buildkit": false` .   
 
 or click this button to enjoy a **Remote Development Environment**:
 
