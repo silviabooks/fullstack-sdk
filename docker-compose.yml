@@ -28,6 +28,28 @@ services:
       timeout: 5s
       retries: 20
 
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${BACKEND_PORT:-4050}:8080"
+    volumes:
+      - ./apps/backend/src:/usr/src/app/src:delegated
+      - ./apps/backend/package.json:/usr/src/app/package.json
+      - ./apps/backend/package-lock.json:/usr/src/app/package-lock.json
+    # environment:
+    #   PGSTRING: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@hasura-db:5432/postgres
+    # depends_on:
+    #   hasura-db:
+    #     condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "-", "http://backend:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
   ###
   ### TESTS
   ###

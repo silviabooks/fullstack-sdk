@@ -1,7 +1,7 @@
 
 start:
 	@mkdir -p .docker-data
-	@docker-compose up -d hasura-apply auth adminer
+	@docker-compose up -d hasura-apply auth backend adminer
 	@docker-compose logs -f hasura-engine
 
 stop:
@@ -60,3 +60,28 @@ clean-auth: stop
 
 restart-auth: stop-auth start-auth
 reset-auth: stop-auth build-auth clean-auth start-auth
+
+#
+# Backend
+#
+
+start-backend:
+	@mkdir -p .docker-data
+	@docker-compose up -d backend adminer
+	@docker-compose logs -f backend
+
+stop-backend:
+	@docker-compose stop backend
+	@docker-compose rm -f backend
+
+test-backend:
+	@docker-compose up backend-test
+
+build-backend:
+	@docker-compose build --no-cache backend
+
+clean-backend: stop
+	@rm -rf .docker-data/backend-db
+
+restart-backend: stop-backend start-backend
+reset-backend: stop-backend build-backend clean-backend start-backend
