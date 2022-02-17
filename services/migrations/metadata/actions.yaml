@@ -1,6 +1,12 @@
-actions: []
+actions:
+- name: getHelloWorld
+  definition:
+    kind: ""
+    handler: '{{BACKEND_BASE_URL}}/hello-world'
+  comment: Get a Hello World
 custom_types:
   enums: []
   input_objects: []
-  objects: []
+  objects:
+  - name: HelloWorldOutput
   scalars: []

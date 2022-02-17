@@ -88,9 +88,12 @@ services:
       HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "${HASURA_JWT_SECRET:-h2leOvdgjwpV0As5L8rZlV3VDVOsOmwk}"}'
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+      BACKEND_BASE_URL: "http://backend:8080"
     restart: unless-stopped
     depends_on:
       hasura-db:
+        condition: service_healthy
+      backend:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO", "-", "http://localhost:8080/healthz"]

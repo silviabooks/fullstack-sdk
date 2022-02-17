@@ -12,11 +12,13 @@ const env = envalid.cleanEnv(process.env, {
   // JWT_DURATION: envalid.str()
 });
 
+const helloWorld = require("./features/hello-world");
+
 forrest.run({
   services: [
     serviceFastify,
     serviceHealthz
     // serviceFetchq
   ],
-  features: []
+  features: [helloWorld]
 });
