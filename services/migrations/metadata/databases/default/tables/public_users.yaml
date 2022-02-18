@@ -12,6 +12,11 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
+    - id
+    filter: {}
+  role: anonymous
+- permission:
+    columns:
     - country_id
     - created_at
     - id
@@ -29,6 +34,25 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - full_name
+    filter: {}
+  role: anonymous
+- permission:
+    check: null
+    columns:
     - last_login
     filter: {}
   role: service_auth
+event_triggers:
+- definition:
+    enable_manual: false
+    insert:
+      columns: "*"
+    update:
+      columns: "*"
+  name: fix_user_fullname
+  retry_conf:
+    interval_sec: 10
+    num_retries: 0
+    timeout_sec: 60
+  webhook: http://backend:8080/fix-users-full-name

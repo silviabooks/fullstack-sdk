@@ -13,6 +13,7 @@ const env = envalid.cleanEnv(process.env, {
 });
 
 const helloWorld = require("./features/hello-world");
+const fixUsersFullName = require("./features/fix-users-full-name");
 
 forrest.run({
   services: [
@@ -20,5 +21,5 @@ forrest.run({
     serviceHealthz
     // serviceFetchq
   ],
-  features: [helloWorld]
+  features: [helloWorld, fixUsersFullName]
 });
