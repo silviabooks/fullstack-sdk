@@ -1,0 +1,30 @@
+{
+  "name": "auth",
+  "version": "0.0.0",
+  "description": "Auth mediator and index service",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "PORT=4000 NODE_ENV=development ./node_modules/.bin/nodemon -L ./src/index.js",
+    "start:docker": "./node_modules/.bin/nodemon -L ./src/index.js",
+    "___// Testing Utilities //___": "",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:e2e": "./node_modules/.bin/jest --projects test/templates/e2e --runInBand --testTimeout=10000",
+    "test:unit": "./node_modules/.bin/jest --projects test/templates/unit",
+    "tdd:e2e": "./node_modules/.bin/jest --projects test/templates/e2e --runInBand --watchAll --testTimeout=10000",
+    "tdd:unit": "jest --projects test/templates/unit --watchAll"
+  },
+  "author": "Marco Pegoraro",
+  "license": "MIT",
+  "dependencies": {
+    "@forrestjs/core": "^4.3.0",
+    "@forrestjs/service-fastify": "^4.3.0",
+    "@forrestjs/service-fastify-healthz": "^4.3.0",
+    "@forrestjs/service-fetchq": "^4.3.0",
+    "envalid": "^7.2.2"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.0",
+    "jest": "^27.5.1",
+    "nodemon": "^2.0.15"
+  }
+}

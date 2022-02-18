@@ -28,6 +28,28 @@ services:
       timeout: 5s
       retries: 20
 
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${BACKEND_PORT:-4050}:8080"
+    volumes:
+      - ./apps/backend/src:/usr/src/app/src:delegated
+      - ./apps/backend/package.json:/usr/src/app/package.json
+      - ./apps/backend/package-lock.json:/usr/src/app/package-lock.json
+    # environment:
+    #   PGSTRING: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@hasura-db:5432/postgres
+    # depends_on:
+    #   hasura-db:
+    #     condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "-", "http://backend:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
   ###
   ### TESTS
   ###
@@ -62,13 +84,17 @@ services:
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_ADMIN_SECRET: "${HASURA_ADMIN_SECRET:-hasura}"
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@hasura-db:5432/postgres
       HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "${HASURA_JWT_SECRET:-h2leOvdgjwpV0As5L8rZlV3VDVOsOmwk}"}'
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+      BACKEND_BASE_URL: "http://backend:8080"
     restart: unless-stopped
     depends_on:
       hasura-db:
+        condition: service_healthy
+      backend:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO", "-", "http://localhost:8080/healthz"]

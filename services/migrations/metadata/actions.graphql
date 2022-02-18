@@ -1,0 +1,10 @@
+type Query {
+  getHelloWorld(
+    name: String!
+  ): HelloWorldOutput
+}
+
+type HelloWorldOutput {
+  message: String!
+}
+
