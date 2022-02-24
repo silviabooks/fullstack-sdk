@@ -5,7 +5,7 @@ tasks:
   - name: Docker
     init: make build
     command: |
-      make start
+      make start-gitpod
   - name: ApClientp
     before: cd apps/client
     init: npm install
