@@ -15,12 +15,12 @@ services:
       - ./apps/login/package.json:/usr/src/app/package.json
       - ./apps/login/package-lock.json:/usr/src/app/package-lock.json
     environment:
-      PGSTRING: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@login-db:5432/postgres
+      PGSTRING: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@hasura-db:5432/postgres
       JWT_SECRET: ${HASURA_JWT_SECRET:-h2leOvdgjwpV0As5L8rZlV3VDVOsOmwk}
       JWT_DURATION: "5m"
     restart: unless-stopped
     depends_on:
-      login-db:
+      hasura-db:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO", "-", "http://login:8080/healthz"]
@@ -110,23 +110,6 @@ services:
       - "${HASURA_DB_PORT:-5432}:5432"
     volumes:
       - .docker-data/hasura-db:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 20
-
-  login-db:
-    build:
-      context: ./services/hasura-db
-      dockerfile: Dockerfile.dev
-    ports:
-      - "${LOGIN_DB_PORT:-5433}:5432"
-    volumes:
-      - .docker-data/login-db:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     restart: unless-stopped

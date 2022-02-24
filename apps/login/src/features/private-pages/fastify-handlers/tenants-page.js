@@ -1,4 +1,4 @@
-const GET_TENANTS = `SELECT "tenant" FROM "login"."tenants" WHERE "user" = $1`;
+const GET_TENANTS = `SELECT "tenant" FROM "app_login"."tenants" WHERE "user" = $1`;
 
 module.exports = async (request, reply) => {
   const res = await request.pg.query(GET_TENANTS, [request.auth.uname]);

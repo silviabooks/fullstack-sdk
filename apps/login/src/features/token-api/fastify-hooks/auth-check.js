@@ -3,9 +3,9 @@ const VALIDATE_REFRESH_TOKEN = `
     "t1"."id" AS "refreshToken",
     "t2"."id" AS "sessionToken",
     LEAST("t1"."expires_at", "t2"."expires_at") AS "expiresAt"
-  FROM "login"."refresh_tokens" AS "t1"
-  LEFT JOIN "login"."session_tokens" AS "t2" ON "t1"."session_token" = "t2"."id"
-  LEFT JOIN "login"."identity_tokens" AS "t3" ON "t2"."identity_token" = "t3"."id"
+  FROM "app_login"."refresh_tokens" AS "t1"
+  LEFT JOIN "app_login"."session_tokens" AS "t2" ON "t1"."session_token" = "t2"."id"
+  LEFT JOIN "app_login"."identity_tokens" AS "t3" ON "t2"."identity_token" = "t3"."id"
   WHERE "t1"."id" = $1
     AND "t1"."is_valid" = true
     AND "t1"."expires_at" > NOW()
@@ -19,11 +19,11 @@ const VALIDATE_REFRESH_TOKEN = `
 const INVALIDATE_SESSION_TOKEN = `
 WITH
   "invalidate_session_tokens" AS (
-    UPDATE "login"."session_tokens"
+    UPDATE "app_login"."session_tokens"
       SET "is_valid" = false
     WHERE "id" IN (
-      SELECT "t1"."session_token" FROM "login"."refresh_tokens" AS "t1"
-      INNER JOIN "login"."session_tokens" AS "t2" ON "t1"."session_token" = "t2"."id"
+      SELECT "t1"."session_token" FROM "app_login"."refresh_tokens" AS "t1"
+      INNER JOIN "app_login"."session_tokens" AS "t2" ON "t1"."session_token" = "t2"."id"
       WHERE "t1"."id" = $1 
       LIMIT 1
       FOR UPDATE SKIP LOCKED
@@ -31,7 +31,7 @@ WITH
     RETURNING "id"
   ),
   "invalidate_refresh_tokens" AS (
-    UPDATE "login"."refresh_tokens"
+    UPDATE "app_login"."refresh_tokens"
        SET "is_valid" = false
      WHERE "is_valid" = true
        AND "session_token" IN (

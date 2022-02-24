@@ -1,7 +1,7 @@
-const FIND_USER = `SELECT "uname" FROM "login"."users" WHERE "uname" = $1 LIMIT 1`;
+const FIND_USER = `SELECT "uname" FROM "app_login"."users" WHERE "uname" = $1 LIMIT 1`;
 
 const GET_IDENTITY_TOKEN = `
-  SELECT "id" FROM "login"."identity_tokens"
+  SELECT "id" FROM "app_login"."identity_tokens"
   WHERE "user" = $1
     AND "is_valid" = true
     AND "expires_at" > NOW()
@@ -9,7 +9,7 @@ const GET_IDENTITY_TOKEN = `
 `;
 
 const CREATE_IDENTITY_TOKEN = `
-  INSERT INTO "login"."identity_tokens" ("user") 
+  INSERT INTO "app_login"."identity_tokens" ("user") 
   VALUES ($1)
   RETURNING "id"
 `;

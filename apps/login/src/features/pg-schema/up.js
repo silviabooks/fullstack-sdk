@@ -2,33 +2,33 @@ module.exports = (pg) =>
   pg.query(`
     BEGIN;
 
-    CREATE SCHEMA IF NOT EXISTS "login";
-    CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA "login";
+    CREATE SCHEMA IF NOT EXISTS "app_login";
+    CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA "app_login";
 
-    CREATE TABLE IF NOT EXISTS "login"."users" (
+    CREATE TABLE IF NOT EXISTS "app_login"."users" (
       "uname" TEXT NOT NULL PRIMARY KEY
     );
 
-    CREATE TABLE IF NOT EXISTS "login"."tenants" (
+    CREATE TABLE IF NOT EXISTS "app_login"."tenants" (
       "user" TEXT NOT NULL,
       "tenant" TEXT NOT NULL,
       PRIMARY KEY ( "user", "tenant" )
     );
 
-    CREATE TABLE IF NOT EXISTS "login"."catalog" (
+    CREATE TABLE IF NOT EXISTS "app_login"."catalog" (
       "user" TEXT NOT NULL,
       "tenant" TEXT NOT NULL,
       "name" TEXT NOT NULL,
       PRIMARY KEY ( "user", "tenant", "name" )
     );
 
-    CREATE TABLE IF NOT EXISTS "login"."apps" (
+    CREATE TABLE IF NOT EXISTS "app_login"."apps" (
       "name" TEXT NOT NULL,
       "url" TEXT NOT NULL,
       PRIMARY KEY ( "name" )
     );
 
-    CREATE TABLE IF NOT EXISTS "login"."identity_tokens" (
+    CREATE TABLE IF NOT EXISTS "app_login"."identity_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "user" TEXT NOT NULL,
       "is_valid" BOOL NOT NULL DEFAULT true,
@@ -37,7 +37,7 @@ module.exports = (pg) =>
       PRIMARY KEY ("id")
     );
 
-    CREATE TABLE IF NOT EXISTS "login"."session_tokens" (
+    CREATE TABLE IF NOT EXISTS "app_login"."session_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "identity_token" uuid NOT NULL,
       "claims" JSON NOT NULL DEFAULT '{}',
@@ -47,7 +47,7 @@ module.exports = (pg) =>
       PRIMARY KEY ("id")
     );
 
-    CREATE TABLE IF NOT EXISTS "login"."refresh_tokens" (
+    CREATE TABLE IF NOT EXISTS "app_login"."refresh_tokens" (
       "id" uuid NOT NULL DEFAULT gen_random_uuid(),
       "session_token" uuid NOT NULL,
       "is_valid" BOOL DEFAULT true NOT NULL,
@@ -80,8 +80,8 @@ module.exports = (pg) =>
       -- Fetch data from multiple tables:
       "app_data" AS (
         SELECT "t1"."url"	AS "value"	
-        FROM "login"."apps" AS "t1"
-        INNER JOIN "login"."catalog" AS "t2" ON "t1"."name" = "t2"."name"
+        FROM "app_login"."apps" AS "t1"
+        INNER JOIN "app_login"."catalog" AS "t2" ON "t1"."name" = "t2"."name"
         WHERE "t1"."name" = (SELECT "app" FROM "params")
           AND "t2"."user" = (SELECT "user" FROM "params")
           AND "t2"."tenant" = (SELECT "tenant" FROM "params")
@@ -89,12 +89,12 @@ module.exports = (pg) =>
       ),
       "tenants" AS (
         SELECT "tenant" AS "value"
-        FROM "login"."tenants"
+        FROM "app_login"."tenants"
         WHERE "user" = (SELECT "user" FROM "params")
       ), 
       "apps" AS (
         SELECT "name" AS "value"
-        FROM "login"."catalog"
+        FROM "app_login"."catalog"
         WHERE "user" = (SELECT "user" FROM "params")
       )
     
@@ -126,7 +126,7 @@ module.exports = (pg) =>
       RETURN QUERY
       WITH 
         session_token AS (
-          INSERT INTO "login"."session_tokens"
+          INSERT INTO "app_login"."session_tokens"
             ("identity_token", "claims") VALUES 
             (PAR_identityToken, PAR_claims) 
           ON CONFLICT ON CONSTRAINT "session_tokens_pkey"
@@ -134,7 +134,7 @@ module.exports = (pg) =>
           RETURNING "id"
         ),
         refresh_token AS (
-          INSERT INTO "login"."refresh_tokens"
+          INSERT INTO "app_login"."refresh_tokens"
             ("session_token", "expires_at") VALUES 
             (
               (SELECT "id" from "session_token"),

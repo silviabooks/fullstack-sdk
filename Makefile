@@ -61,6 +61,9 @@ clean-login: stop
 restart-login: stop-login start-login
 reset-login: stop-login build-login clean-login start-login
 
+logs-login:
+	@docker-compose logs -f login
+
 #
 # Backend
 #
