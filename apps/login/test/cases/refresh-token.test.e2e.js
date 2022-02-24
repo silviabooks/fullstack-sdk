@@ -86,8 +86,8 @@ describe("Refresh Token API", () => {
           SELECT 
             "t1"."is_valid" AS "refresh_is_valid",
             "t2"."is_valid" AS "session_is_valid"
-          FROM "public"."refresh_tokens" AS "t1"
-          LEFT JOIN "public"."session_tokens" AS "t2"
+          FROM "login"."refresh_tokens" AS "t1"
+          LEFT JOIN "login"."session_tokens" AS "t2"
           ON "t1"."session_token" = "t2"."id"
           WHERE "t1"."id" = $1
         `,
@@ -103,9 +103,9 @@ describe("Refresh Token API", () => {
         // There should be no valid refresh tokens for the session
         const r2 = await global.testPost.debug("/pg/query", {
           q: `
-          SELECT * FROM "public"."refresh_tokens"
+          SELECT * FROM "login"."refresh_tokens"
           WHERE "is_valid" = true AND "session_token" IN (
-            SELECT "session_token" FROM "public"."refresh_tokens"
+            SELECT "session_token" FROM "login"."refresh_tokens"
             WHERE "id" = $1
           )
         `,

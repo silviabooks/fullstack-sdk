@@ -63,7 +63,7 @@ describe("Verify Token", () => {
         // Invalidate the Session Token
         await global.testPost("/pg/query", {
           q: `
-          UPDATE "public"."refresh_tokens" 
+          UPDATE "login"."refresh_tokens" 
              SET "is_valid" = false 
            WHERE "id" = $1`,
           p: [refreshToken]
@@ -84,7 +84,7 @@ describe("Verify Token", () => {
         // Expire the Identity Token
         await global.testPost("/pg/query", {
           q: `
-          UPDATE "public"."refresh_tokens" 
+          UPDATE "login"."refresh_tokens" 
              SET "expires_at" = NOW() - INTERVAL '1s'
            WHERE "id" = $1`,
           p: [refreshToken]
@@ -107,7 +107,7 @@ describe("Verify Token", () => {
         // Invalidate the Session Token
         await global.testPost("/pg/query", {
           q: `
-          UPDATE "public"."session_tokens" 
+          UPDATE "login"."session_tokens" 
              SET "is_valid" = false 
            WHERE "identity_token" = $1`,
           p: [identityToken]
@@ -128,7 +128,7 @@ describe("Verify Token", () => {
         // Expire the Identity Token
         await global.testPost("/pg/query", {
           q: `
-          UPDATE "public"."session_tokens" 
+          UPDATE "login"."session_tokens" 
              SET "expires_at" = NOW() - INTERVAL '1s'
            WHERE "identity_token" = $1`,
           p: [identityToken]
@@ -151,7 +151,7 @@ describe("Verify Token", () => {
         // Invalidate the Identity Token
         await global.testPost("/pg/query", {
           q: `
-          UPDATE "public"."identity_tokens" 
+          UPDATE "login"."identity_tokens" 
              SET "is_valid" = false 
            WHERE "id" = $1`,
           p: [identityToken]
@@ -172,7 +172,7 @@ describe("Verify Token", () => {
         // Expire the Identity Token
         await global.testPost("/pg/query", {
           q: `
-          UPDATE "public"."identity_tokens" 
+          UPDATE "login"."identity_tokens" 
              SET "expires_at" = NOW() - INTERVAL '1s'
            WHERE "id" = $1`,
           p: [identityToken]
