@@ -1,6 +1,12 @@
 
 start:
 	@mkdir -p .docker-data
+	@docker-compose up -d hasura-apply login adminer client
+	@docker-compose logs -f hasura-engine
+
+# In Gitpod all client apps run natively
+start-gitpod:
+	@mkdir -p .docker-data
 	@docker-compose up -d hasura-apply login adminer
 	@docker-compose logs -f hasura-engine
 

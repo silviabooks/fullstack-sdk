@@ -5,12 +5,18 @@ tasks:
   - name: Docker
     init: make build
     command: |
-      make start
+      make start-gitpod
+  - name: ApClientp
+    before: cd apps/client
+    init: npm install
+    command: |
+      echo "Waiting for the backend to build and come online." &&
+      echo "(this may take a few minutes the first time)" &&
+      bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080/v1/version)" != "200" ]]; do sleep 5; done' &&
+      npm run start:gitpod
 
 ports:
   - port: 5432
-    onOpen: ignore
-  - port: 5433
     onOpen: ignore
   - port: 4000
     onOpen: ignore

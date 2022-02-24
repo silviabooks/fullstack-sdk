@@ -1,0 +1,87 @@
+import { useGetConfig, useGetContext } from "@forrestjs/react-root";
+import { createContext, useEffect, useState } from "react";
+// import { useGetContext } from "@forrestjs/react-root";
+
+const USE_APPLICATION_TOKEN = "oneFront.auth.strategy.useApplicationToken.hook";
+
+export const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  // The application token offers a strategy for retrivial and refresh
+  // the strategy itself is replaceable via hooks
+  const useApplicationToken = useGetContext(USE_APPLICATION_TOKEN);
+  const at = useApplicationToken();
+
+  // Internal state:
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [token, setToken] = useState(null);
+
+  // Feature flags:
+  const verifyToken = useGetConfig("oneFront.auth.verifyToken", false);
+  const refreshToken = useGetConfig("oneFront.auth.refreshToken", false);
+
+  // Grant access to the App
+  // (boot time Access Token lifecycle)
+  useEffect(() => {
+    (async () => {
+      let token = null;
+
+      // Get AT
+      try {
+        token = await at.get();
+        setToken(token);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+        return;
+      }
+
+      // Verify AT
+      if (verifyToken) {
+        try {
+          await at.verify(token);
+        } catch (err) {
+          setError(err);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Refresh AT
+      if (refreshToken) {
+        try {
+          token = await at.refresh(token);
+          setToken(token);
+        } catch (err) {
+          setError(err);
+          setLoading(false);
+          return;
+        }
+      }
+
+      setLoading(false);
+    })();
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        loading,
+        error,
+        isPublic: token === null,
+        token,
+        setToken: async (token) => {
+          try {
+            await at.set(token);
+            setToken(token);
+          } catch (err) {
+            setError(err);
+          }
+        }
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
