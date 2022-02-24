@@ -1,5 +1,5 @@
 const GET_APPS = `
-  SELECT * FROM "public"."catalog" 
+  SELECT * FROM "app_login"."catalog" 
   WHERE "user" = $1 AND "tenant" = $2
 `;
 

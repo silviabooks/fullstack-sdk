@@ -1,5 +1,5 @@
 module.exports = async (request, reply) => {
-  const users = await request.pg.query('SELECT * FROM "public"."users"');
+  const users = await request.pg.query('SELECT * FROM "app_login"."users"');
 
   const loginLinks = users.rows.map(
     (user) => `

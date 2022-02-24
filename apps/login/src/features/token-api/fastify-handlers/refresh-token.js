@@ -1,10 +1,10 @@
 const REFRESH_TOKEN = `
   WITH 
     "burn_token" AS (
-      UPDATE "public"."refresh_tokens"
+      UPDATE "app_login"."refresh_tokens"
         SET "is_valid" = false
       WHERE "id" IN (
-        SELECT "id" FROM "public"."refresh_tokens"
+        SELECT "id" FROM "app_login"."refresh_tokens"
         WHERE "id" = $1
         LIMIT 1
         FOR UPDATE SKIP LOCKED
@@ -12,7 +12,7 @@ const REFRESH_TOKEN = `
       RETURNING "session_token" 
     ),
     "refresh_token" AS (
-      INSERT INTO "public"."refresh_tokens"
+      INSERT INTO "app_login"."refresh_tokens"
       ("session_token") SELECT "session_token" FROM "burn_token"
       RETURNING "id", "session_token", "expires_at"
     )
@@ -22,7 +22,7 @@ const REFRESH_TOKEN = `
     "t1"."expires_at" AS "expires",
     "t2"."claims" AS "claims"
   FROM "refresh_token" AS "t1"
-  LEFT JOIN "public"."session_tokens" AS "t2" ON "t1"."session_token" = "t2"."id"
+  LEFT JOIN "app_login"."session_tokens" AS "t2" ON "t1"."session_token" = "t2"."id"
 `;
 
 const buildClaims = (sessionToken, expires, claims) => ({

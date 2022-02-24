@@ -1,5 +1,5 @@
 {
-  "name": "auth",
+  "name": "app_login",
   "version": "0.0.0",
   "description": "Auth mediator and index service",
   "main": "src/index.js",
