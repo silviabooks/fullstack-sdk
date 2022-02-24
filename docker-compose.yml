@@ -4,26 +4,26 @@ services:
   ### APPS
   ###
 
-  auth:
+  login:
     build:
-      context: ./apps/auth
+      context: ./apps/login
       dockerfile: Dockerfile.dev
     ports:
-      - "${AUTH_PORT:-4040}:8080"
+      - "${LOGIN_PORT:-4040}:8080"
     volumes:
-      - ./apps/auth/src:/usr/src/app/src:delegated
-      - ./apps/auth/package.json:/usr/src/app/package.json
-      - ./apps/auth/package-lock.json:/usr/src/app/package-lock.json
+      - ./apps/login/src:/usr/src/app/src:delegated
+      - ./apps/login/package.json:/usr/src/app/package.json
+      - ./apps/login/package-lock.json:/usr/src/app/package-lock.json
     environment:
-      PGSTRING: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@auth-db:5432/postgres
+      PGSTRING: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@login-db:5432/postgres
       JWT_SECRET: ${HASURA_JWT_SECRET:-h2leOvdgjwpV0As5L8rZlV3VDVOsOmwk}
       JWT_DURATION: "5m"
     restart: unless-stopped
     depends_on:
-      auth-db:
+      login-db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-qO", "-", "http://auth:8080/healthz"]
+      test: ["CMD", "wget", "-qO", "-", "http://login:8080/healthz"]
       interval: 10s
       timeout: 5s
       retries: 20
@@ -54,20 +54,20 @@ services:
   ### TESTS
   ###
 
-  auth-test:
+  login-test:
     build:
-      context: ./apps/auth
+      context: ./apps/login
       dockerfile: Dockerfile.dev
     environment:
-      TEST_URL: http://auth:8080
+      TEST_URL: http://login:8080
     volumes:
-      - ./apps/auth/src:/usr/src/app/src:delegated
-      - ./apps/auth/test:/usr/src/app/test:delegated
-      - ./apps/auth/jest.config:/usr/src/app/jest.config:delegated
+      - ./apps/login/src:/usr/src/app/src:delegated
+      - ./apps/login/test:/usr/src/app/test:delegated
+      - ./apps/login/jest.config:/usr/src/app/jest.config:delegated
     entrypoint: ["npm", "run", "test"]
     tty: true
     depends_on:
-      auth:
+      login:
         condition: service_healthy
 
   ###
@@ -119,14 +119,14 @@ services:
       timeout: 5s
       retries: 20
 
-  auth-db:
+  login-db:
     build:
       context: ./services/hasura-db
       dockerfile: Dockerfile.dev
     ports:
-      - "${AUTH_DB_PORT:-5433}:5432"
+      - "${LOGIN_DB_PORT:-5433}:5432"
     volumes:
-      - .docker-data/auth-db:/var/lib/postgresql/data
+      - .docker-data/login-db:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     restart: unless-stopped

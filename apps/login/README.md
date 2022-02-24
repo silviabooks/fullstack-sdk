@@ -1,4 +1,4 @@
-# Auth
+# Login
 
 This NodeJS app represents the **AUTHENTICATION AUTHORITY** (AA) responsible for converting an Identity Token (in our case just a plain username) into an Application Refresh Token that is then passed to the third parties Apps.
 

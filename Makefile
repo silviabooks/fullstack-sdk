@@ -1,7 +1,7 @@
 
 start:
 	@mkdir -p .docker-data
-	@docker-compose up -d hasura-apply auth adminer
+	@docker-compose up -d hasura-apply login adminer
 	@docker-compose logs -f hasura-engine
 
 stop:
@@ -17,7 +17,7 @@ clean: stop
 	@rm -rf .docker-data
 	@mkdir -p .docker-data
 
-test: test-auth
+test: test-login
 
 
 
@@ -37,29 +37,29 @@ hasura-export:
 
 
 #
-# Auth
+# Login
 #
 
-start-auth:
+start-login:
 	@mkdir -p .docker-data
-	@docker-compose up -d auth adminer
-	@docker-compose logs -f auth
+	@docker-compose up -d login adminer
+	@docker-compose logs -f login
 
-stop-auth:
-	@docker-compose stop auth
-	@docker-compose rm -f auth
+stop-login:
+	@docker-compose stop login
+	@docker-compose rm -f login
 
-test-auth:
-	@docker-compose up auth-test
+test-login:
+	@docker-compose up login-test
 
-build-auth:
-	@docker-compose build --no-cache auth
+build-login:
+	@docker-compose build --no-cache login
 
-clean-auth: stop
-	@rm -rf .docker-data/auth-db
+clean-login: stop
+	@rm -rf .docker-data/login-db
 
-restart-auth: stop-auth start-auth
-reset-auth: stop-auth build-auth clean-auth start-auth
+restart-login: stop-login start-login
+reset-login: stop-login build-login clean-login start-login
 
 #
 # Backend
