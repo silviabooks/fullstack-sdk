@@ -91,3 +91,25 @@ reset-backend: stop-backend build-backend clean-backend start-backend
 
 logs-backend:
 	@docker-compose logs -f backend
+
+#
+# Client
+#
+
+start-client:
+	@mkdir -p .docker-data
+	@docker-compose up -d client adminer
+	@docker-compose logs -f client
+
+stop-client:
+	@docker-compose stop client
+	@docker-compose rm -f client
+
+build-client:
+	@docker-compose build --no-cache client
+
+restart-client: stop-client start-client
+reset-client: stop-client build-client clean-client start-client
+
+logs-client:
+	@docker-compose logs -f client

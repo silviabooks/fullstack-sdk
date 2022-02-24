@@ -50,6 +50,26 @@ services:
       timeout: 5s
       retries: 20
 
+  client:
+    build:
+      context: ./apps/client
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${CLIENT_PORT:-3000}:3000"
+    volumes:
+      - ./apps/client/public:/usr/src/app/public:delegated
+      - ./apps/client/src:/usr/src/app/src:delegated
+    environment:
+      REACT_APP_HASURA_URL: http://localhost:8080
+      CHOKIDAR_USEPOLLING: "true"
+    working_dir: /usr/src/app
+    entrypoint: ["npm", "start"]
+    stdin_open: true
+    tty: true
+    depends_on:
+      hasura-engine:
+        condition: service_healthy
+
   ###
   ### TESTS
   ###
