@@ -1,7 +1,7 @@
 
 start:
 	@mkdir -p .docker-data
-	@docker-compose up -d hasura-apply login adminer
+	@docker-compose up -d hasura-apply client login adminer
 	@docker-compose logs -f hasura-engine
 
 stop:
