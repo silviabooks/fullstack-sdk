@@ -24,7 +24,7 @@ make stop
 make reset
 ```
 
-*Note: If you encounter failure when running the `make start` , ensure that you have disabled `buildkit` option. Which is located inside Docker Desktop application -> Settings -> Docker Engine and set `"buildkit": true` to `"buildkit": false` .   
+\*Note: If you encounter failure when running the `make start` , ensure that you have disabled `buildkit` option. Which is located inside Docker Desktop application -> Settings -> Docker Engine and set `"buildkit": true` to `"buildkit": false` .
 
 or click this button to enjoy a **Remote Development Environment**:
 
@@ -78,6 +78,13 @@ or click this button to enjoy a **Remote Development Environment**:
   - [Make & DockerCompose Interface](#make--dockercompose-interface)
   - [NPM Interface](#npm-interface)
   - [TDD & Native Tests](#tdd--native-tests)
+- [Client App in React](#client-app-in-react)
+  - [WebApp vs SPA](#webapp-vs-spa)
+  - [CRA](#cra)
+  - [TS Libraries & Components](#ts-libraries--components)
+  - [Service Calls](#service-calls)
+  - [Webpack Proxy](#webpack-proxy)
+  - [Client Routing](#client-routing)
 
 ---
 
@@ -726,3 +733,48 @@ The **DEFAULT APP PORT** is hard-coded in `test/templates/e2e/jest.env.js` but y
 👉 Environmental files are sourced by the Test Runner using [dotenv](https://www.npmjs.com/package/dotenv).
 
 ---
+
+## Client App in React
+
+We chose [React](https://reactjs.org/) as client rendering engine.
+
+### WebApp vs SPA
+
+Disambguation:
+
+- A SPA is served by a CDN, every service call is [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+- A WebApp is served by WebServer, it can make [same-origin](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) calls, and _CORS_
+
+**👉 WE DO WEB APPs 👈**
+
+Our goal is to **delegate the security responsibility to the browser** as much as possibile. This mostly goes around the simple trick of saving sensible informations in [_http-only cookies_](<https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#:~:text=A%20cookie%20with%20the%20HttpOnly,cross%2Dsite%20scripting%20(XSS)%20attacks.>) and make server request to the _same-origin_ only.
+
+🚧 We may ask every end-leaf App to build proxy services towards others backend services so to leverage service-to-service [Zero Trust](https://en.wikipedia.org/wiki/Zero_trust_security_model) security principles.
+
+### CRA
+
+We suggest to base our client apps on [Create React App](https://reactjs.org/docs/create-a-new-react-app.html#create-react-app) that is truly simple and removes most of the infrastructural hassles of building a modern web app.
+
+**👉 DO NOT USE NEXT.JS 👈**
+
+Next.js is a wonderful tool but its goal is to build _Server Side Rendered_ apps. We don't need that. Our Apps work **behind login** and do not need to be indexed by search engines.
+
+🔥 It is a terrible mistake to enable SSR in our Apps as we would take in-house the rendering costs that are naturally sustained by the customer!!!
+
+### TS Libraries & Components
+
+[[TO BE COMPLETED]]
+
+### Service Calls
+
+[[TO BE COMPLETED]]
+
+### Webpack Proxy
+
+In order to perform _same-origin_ calls you can easily setup a proxy within the basic CRA setup:
+
+https://create-react-app.dev/docs/proxying-api-requests-in-development/
+
+### Client Routing
+
+[[TO BE COMPLETED]]
