@@ -10,7 +10,7 @@
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
     "web-vitals": "^2.1.4",
-    "@forrestjs/hooks": "4.3.0",
+    "@forrestjs/core": "4.3.0",
     "@forrestjs/react-root": "0.6.0",
     "@forrestjs/react-router": "0.6.0",
     "@forrestjs/react-mui": "0.6.0"
