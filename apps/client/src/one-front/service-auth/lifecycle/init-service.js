@@ -1,4 +1,5 @@
 import { DefaultLoadingView } from "../views/DefaultLoadingView";
+import { DefaultErrorView } from "../views/DefaultErrorView";
 import { DefaultPublicView } from "../views/DefaultPublicView";
 import { useDelegatedApplicationToken } from "../state/use-delegated-application-token";
 
@@ -6,6 +7,11 @@ export const onInitService = ({ createExtension, getConfig, setContext }) => {
   const { value: LoadingView } = createExtension.waterfall(
     "$ONE_FRONT_AUTH_LOADING_VIEW",
     getConfig("oneFront.auth.view.loading", { component: DefaultLoadingView })
+  );
+
+  const { value: ErrorView } = createExtension.waterfall(
+    "$ONE_FRONT_AUTH_ERROR_VIEW",
+    getConfig("oneFront.auth.view.error", { component: DefaultErrorView })
   );
 
   const { value: PublicView } = createExtension.waterfall(
@@ -23,6 +29,7 @@ export const onInitService = ({ createExtension, getConfig, setContext }) => {
   setContext("oneFront.auth", {
     view: {
       loading: LoadingView,
+      error: ErrorView,
       public: PublicView
     },
     strategy: {

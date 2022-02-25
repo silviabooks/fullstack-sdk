@@ -9,6 +9,7 @@ export const serviceAuth = ({ registerTargets }) => {
     ONE_FRONT_AUTH_USE_APPLICATION_TOKEN:
       "one-front/auth/strategy/use-application-token",
     ONE_FRONT_AUTH_LOADING_VIEW: "one-front/auth/view/loading",
+    ONE_FRONT_AUTH_ERROR_VIEW: "one-front/auth/view/error",
     ONE_FRONT_AUTH_PUBLIC_VIEW: "one-front/auth/view/public"
   });
 

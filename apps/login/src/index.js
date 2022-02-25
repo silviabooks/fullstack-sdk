@@ -29,6 +29,12 @@ forrest.run({
     jwt: {
       secret: env.JWT_SECRET,
       duration: env.JWT_DURATION
+    },
+    fastify: {
+      cors: {
+        origin: ["http://localhost:3000"],
+        credentials: true
+      }
     }
   },
   services: [

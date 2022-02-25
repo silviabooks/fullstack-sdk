@@ -44,6 +44,7 @@ SELECT * FROM "invalidate_session_tokens"
 module.exports = async (request, reply) => {
   // Get the Refresh Token from the headers:
   // (straight header or cookie)
+  console.log("@check");
   const authToken =
     request.headers["x-refresh-token"] || request.cookies["x-refresh-token"];
   if (!authToken) {

@@ -1,6 +1,5 @@
 import { useGetConfig, useGetContext } from "@forrestjs/react-root";
 import { createContext, useEffect, useState } from "react";
-// import { useGetContext } from "@forrestjs/react-root";
 
 const USE_APPLICATION_TOKEN = "oneFront.auth.strategy.useApplicationToken.hook";
 
@@ -19,7 +18,8 @@ export const AuthProvider = ({ children }) => {
 
   // Feature flags:
   const verifyToken = useGetConfig("oneFront.auth.verifyToken", false);
-  const refreshToken = useGetConfig("oneFront.auth.refreshToken", false);
+  const refreshToken = useGetConfig("oneFront.auth.refreshToken", true);
+  const keepAlive = Number(useGetConfig("oneFront.auth.keepAlive", 15000));
 
   // Grant access to the App
   // (boot time Access Token lifecycle)
@@ -58,6 +58,29 @@ export const AuthProvider = ({ children }) => {
           setLoading(false);
           return;
         }
+      }
+
+      // Start background refresh
+      if (keepAlive > 0) {
+        let ticker = null;
+
+        const loop = async () => {
+          clearTimeout(ticker);
+
+          try {
+            token = await at.refresh(token);
+            setToken(token);
+          } catch (err) {
+            setError(err);
+            setLoading(false);
+            return;
+          }
+
+          ticker = setTimeout(loop, keepAlive);
+        };
+
+        // Kick the ticker
+        ticker = setTimeout(loop, keepAlive);
       }
 
       setLoading(false);
