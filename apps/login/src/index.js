@@ -6,6 +6,7 @@ const serviceFastify = require("@forrestjs/service-fastify");
 const serviceHealthz = require("@forrestjs/service-fastify-healthz");
 const serviceJwt = require("@forrestjs/service-jwt");
 const serviceCookie = require("@forrestjs/service-fastify-cookie");
+const serviceCors = require("@forrestjs/service-fastify-cors");
 
 // Local Services
 const servicePg = require("./service-pg");
@@ -35,7 +36,8 @@ forrest.run({
     serviceHealthz,
     serviceJwt,
     servicePg,
-    serviceCookie
+    serviceCookie,
+    serviceCors
   ],
   features: [pgSchema, publicPages, privatePages, tokenApi]
 });
