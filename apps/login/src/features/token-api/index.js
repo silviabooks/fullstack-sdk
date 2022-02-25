@@ -1,8 +1,17 @@
 const authCheck = require("./fastify-hooks/auth-check");
 const verifyToken = require("./fastify-handlers/verify-token");
 const refreshToken = require("./fastify-handlers/refresh-token");
+const introspectToken = require("./fastify-handlers/introspect-token");
 
-const privatePages = (fastify, opts, done) => {
+const publicAPI = async (fastify) => {
+  fastify.route({
+    method: "POST",
+    url: "/v1/token/introspect",
+    handler: introspectToken
+  });
+};
+
+const privateAPI = async (fastify) => {
   // Apply auth control
   fastify.decorateRequest("auth", null);
   fastify.addHook("preValidation", authCheck);
@@ -18,12 +27,17 @@ const privatePages = (fastify, opts, done) => {
     url: "/v1/token/refresh",
     handler: refreshToken
   });
-
-  done();
 };
 
-module.exports = {
-  name: "privatePages",
-  target: "$FASTIFY_PLUGIN",
-  handler: ({ registerPlugin }) => registerPlugin(privatePages)
-};
+module.exports = [
+  {
+    name: "publicAPI",
+    target: "$FASTIFY_PLUGIN",
+    handler: ({ registerPlugin }) => registerPlugin(publicAPI)
+  },
+  {
+    name: "privateAPI",
+    target: "$FASTIFY_PLUGIN",
+    handler: ({ registerPlugin }) => registerPlugin(privateAPI)
+  }
+];

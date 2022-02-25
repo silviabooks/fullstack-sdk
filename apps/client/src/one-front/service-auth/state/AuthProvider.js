@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
+  const [tokenData, setTokenData] = useState(null);
 
   // Feature flags:
   // TODO: verify token should be true by default
@@ -50,7 +51,8 @@ export const AuthProvider = ({ children }) => {
       // TODO: if the token is not valid, force a refresh.
       if (verifyToken) {
         try {
-          await at.verify(token);
+          const data = await at.verify(token);
+          setTokenData(data);
         } catch (err) {
           setError(err);
           setLoading(false);
@@ -104,6 +106,8 @@ export const AuthProvider = ({ children }) => {
         error,
         isPublic: token === null,
         token,
+        tokenData,
+        // TODO: should also introspect the token and update tokenData
         setToken: async (token) => {
           try {
             await at.set(token);

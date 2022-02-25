@@ -29,6 +29,10 @@ export const useApplicationToken = () => {
   const storage = new BrowserStorage("fake-at");
   const dt = queryString["token"];
 
+  // This stuff should come from environment
+  const introspectUrl = "http://localhost:4040/v1/token/introspect";
+  const refreshUrl = "http://localhost:4040/v1/token/refresh";
+
   const set = (token) => (token ? storage.set(token) : storage.delete());
 
   const get = async () => {
@@ -42,7 +46,7 @@ export const useApplicationToken = () => {
     // Refresh a DelegateToken
     // -> send DT via headers
     const res = await axios.post(
-      "http://localhost:4040/v1/token/refresh",
+      refreshUrl,
       {},
       {
         headers: { "x-refresh-token": dt },
@@ -57,23 +61,28 @@ export const useApplicationToken = () => {
     return applicationToken;
   };
 
-  const verify = (token) => {
-    throw new Error("ApplicationToken @verification@ not yet implemented");
-  };
-
   const refresh = async () => {
     // Send current RT via cookies
-    const res = await axios.post(
-      "http://localhost:4040/v1/token/refresh",
-      {},
-      { withCredentials: true }
-    );
+    const res = await axios.post(refreshUrl, {}, { withCredentials: true });
 
     // Persist the token and return it
     const { applicationToken } = res.data;
     set(applicationToken);
 
     return applicationToken;
+  };
+
+  // Introspects the token
+  // (with automatic fallback on refresh)
+  const verify = async (token) => {
+    try {
+      const res = await axios.post(introspectUrl, { applicationToken: token });
+      return res.data;
+    } catch (err) {
+      const token = await refresh();
+      const res = await axios.post(introspectUrl, { applicationToken: token });
+      return res.data;
+    }
   };
 
   return {
