@@ -29,8 +29,8 @@ class BrowserStorage {
 }
 
 export const useDelegatedApplicationToken = () => {
-  const tokenParam = useGetConfig("oneFront.auth.token.param", "token");
-  const tokenStorageKey = useGetConfig("oneFront.auth.token.storage.key", "at");
+  const tokenParam = useGetConfig("one.auth.token.param", "token");
+  const tokenStorageKey = useGetConfig("one.auth.token.storage.key", "at");
 
   const [queryString, setQuery] = useQueryString(window.location, (path) => {
     window.history.pushState(null, document.title, path);

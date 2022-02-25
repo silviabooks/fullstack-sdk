@@ -1,7 +1,7 @@
 import { useGetConfig, useGetContext } from "@forrestjs/react-root";
 import { createContext, useEffect, useState } from "react";
 
-const USE_APPLICATION_TOKEN = "oneFront.auth.strategy.useApplicationToken.hook";
+const USE_APPLICATION_TOKEN = "one.auth.strategy.useApplicationToken.hook";
 
 export const AuthContext = createContext();
 
@@ -17,9 +17,10 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
 
   // Feature flags:
-  const verifyToken = useGetConfig("oneFront.auth.verifyToken", false);
-  const refreshToken = useGetConfig("oneFront.auth.refreshToken", true);
-  const keepAlive = Number(useGetConfig("oneFront.auth.keepAlive", 15000));
+  // TODO: verify token should be true by default
+  const verifyToken = useGetConfig("one.auth.token.verify", false);
+  const refreshToken = useGetConfig("one.auth.token.refresh", false);
+  const keepAlive = Number(useGetConfig("one.auth.token.keepAlive", 60000));
 
   // Grant access to the App
   // (boot time Access Token lifecycle)
@@ -30,6 +31,14 @@ export const AuthProvider = ({ children }) => {
       // Get AT
       try {
         token = await at.get();
+
+        // No token found and no session means there is
+        // to way to log in the poor bastard.
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
         setToken(token);
       } catch (err) {
         setError(err);
@@ -38,6 +47,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Verify AT
+      // TODO: if the token is not valid, force a refresh.
       if (verifyToken) {
         try {
           await at.verify(token);
