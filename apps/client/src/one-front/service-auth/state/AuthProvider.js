@@ -1,7 +1,7 @@
 import { useGetConfig, useGetContext } from "@forrestjs/react-root";
 import { createContext, useEffect, useState } from "react";
 
-const USE_APPLICATION_TOKEN = "oneFront.auth.strategy.useApplicationToken.hook";
+const USE_APPLICATION_TOKEN = "one.auth.strategy.useApplicationToken.hook";
 
 export const AuthContext = createContext();
 
@@ -17,9 +17,9 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
 
   // Feature flags:
-  const verifyToken = useGetConfig("oneFront.auth.verifyToken", false);
-  const refreshToken = useGetConfig("oneFront.auth.refreshToken", true);
-  const keepAlive = Number(useGetConfig("oneFront.auth.keepAlive", 15000));
+  const verifyToken = useGetConfig("one.auth.verifyToken", false);
+  const refreshToken = useGetConfig("one.auth.refreshToken", true);
+  const keepAlive = Number(useGetConfig("one.auth.keepAlive", 15000));
 
   // Grant access to the App
   // (boot time Access Token lifecycle)

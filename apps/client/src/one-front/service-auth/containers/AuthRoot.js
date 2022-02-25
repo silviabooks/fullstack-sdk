@@ -5,9 +5,9 @@ import { useAuth } from "../state/use-auth";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
 
 export const AuthRoot = ({ component, props = {} }) => {
-  const LoadingView = useGetContext("oneFront.auth.view.loading");
-  const ErrorView = useGetContext("oneFront.auth.view.error");
-  const PublicView = useGetContext("oneFront.auth.view.public");
+  const LoadingView = useGetContext("one.auth.view.loading");
+  const ErrorView = useGetContext("one.auth.view.error");
+  const PublicView = useGetContext("one.auth.view.public");
   const { loading, error, isPublic } = useAuth();
 
   if (loading) {

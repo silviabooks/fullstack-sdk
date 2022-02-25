@@ -5,28 +5,28 @@ import { useDelegatedApplicationToken } from "./state/use-delegated-application-
 
 export const onInitService = ({ createExtension, getConfig, setContext }) => {
   const { value: LoadingView } = createExtension.waterfall(
-    "$ONE_FRONT_AUTH_LOADING_VIEW",
-    getConfig("oneFront.auth.view.loading", { component: DefaultLoadingView })
+    "$ONE_AUTH_LOADING_VIEW",
+    getConfig("one.auth.view.loading", { component: DefaultLoadingView })
   );
 
   const { value: ErrorView } = createExtension.waterfall(
-    "$ONE_FRONT_AUTH_ERROR_VIEW",
-    getConfig("oneFront.auth.view.error", { component: DefaultErrorView })
+    "$ONE_AUTH_ERROR_VIEW",
+    getConfig("one.auth.view.error", { component: DefaultErrorView })
   );
 
   const { value: PublicView } = createExtension.waterfall(
-    "$ONE_FRONT_AUTH_PUBLIC_VIEW",
-    getConfig("oneFront.auth.view.public", { component: DefaultPublicView })
+    "$ONE_AUTH_PUBLIC_VIEW",
+    getConfig("one.auth.view.public", { component: DefaultPublicView })
   );
 
   const { value: useApplicationToken } = createExtension.waterfall(
-    "$ONE_FRONT_AUTH_USE_APPLICATION_TOKEN",
-    getConfig("oneFront.auth.useApplicationToken", {
+    "$ONE_AUTH_USE_APPLICATION_TOKEN",
+    getConfig("one.auth.useApplicationToken", {
       hook: useDelegatedApplicationToken
     })
   );
 
-  setContext("oneFront.auth", {
+  setContext("one.auth", {
     view: {
       loading: LoadingView,
       error: ErrorView,
