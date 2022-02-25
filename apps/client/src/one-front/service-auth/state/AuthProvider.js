@@ -30,6 +30,14 @@ export const AuthProvider = ({ children }) => {
       // Get AT
       try {
         token = await at.get();
+
+        // No token found and no session means there is
+        // to way to log in the poor bastard.
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
         setToken(token);
       } catch (err) {
         setError(err);

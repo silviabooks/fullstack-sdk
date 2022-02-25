@@ -1,7 +1,7 @@
-import { DefaultLoadingView } from "../views/DefaultLoadingView";
-import { DefaultErrorView } from "../views/DefaultErrorView";
-import { DefaultPublicView } from "../views/DefaultPublicView";
-import { useDelegatedApplicationToken } from "../state/use-delegated-application-token";
+import { DefaultLoadingView } from "./views/DefaultLoadingView";
+import { DefaultErrorView } from "./views/DefaultErrorView";
+import { DefaultPublicView } from "./views/DefaultPublicView";
+import { useDelegatedApplicationToken } from "./state/use-delegated-application-token";
 
 export const onInitService = ({ createExtension, getConfig, setContext }) => {
   const { value: LoadingView } = createExtension.waterfall(

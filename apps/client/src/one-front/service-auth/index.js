@@ -1,6 +1,6 @@
-import { onInitService } from "./lifecycle/init-service";
-import { AuthRoot } from "./containers/AuthRoot";
+import { onInitService } from "./init-service";
 import { AuthProvider } from "./state/AuthProvider";
+import { AuthRoot } from "./containers/AuthRoot";
 
 export { useAuth } from "./state/use-auth";
 
