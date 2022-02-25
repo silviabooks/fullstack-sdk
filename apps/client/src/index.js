@@ -9,6 +9,18 @@ import { dashboard } from "./features/dashboard";
 
 forrest
   .run({
+    settings: {
+      one: {
+        auth: {
+          token: {
+            refresh: true
+          }
+        },
+        layout: {
+          title: "Demo App"
+        }
+      }
+    },
     services,
     features: [fakeLogin, dashboard]
   })

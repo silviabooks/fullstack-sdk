@@ -6,10 +6,13 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { useAuth } from "../../service-auth";
 import { useEmbed } from "../state/use-embed";
 import { LayoutRoutes } from "./LayoutRoutes";
+import { LayoutHeader } from "./LayoutHeader";
 
 export const Layout = () => {
   const auth = useAuth();
   const { isEmbed } = useEmbed();
+
+  const title = useGetContext("one.layout.title");
   const routes = useGetContext("one.layout.route.items");
 
   // Embed mode - Pure routing
@@ -26,7 +29,7 @@ export const Layout = () => {
   return (
     <Box>
       <CssBaseline />
-      <h4>Layout</h4>
+      <LayoutHeader title={title} />
       <LayoutRoutes items={routes} />
       <hr />
       {auth.token}

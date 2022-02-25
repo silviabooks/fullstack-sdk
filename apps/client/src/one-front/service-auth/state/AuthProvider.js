@@ -18,9 +18,9 @@ export const AuthProvider = ({ children }) => {
 
   // Feature flags:
   // TODO: verify token should be true by default
-  const verifyToken = useGetConfig("one.auth.verifyToken", false);
-  const refreshToken = useGetConfig("one.auth.refreshToken", false);
-  const keepAlive = Number(useGetConfig("one.auth.keepAlive", 60000));
+  const verifyToken = useGetConfig("one.auth.token.verify", false);
+  const refreshToken = useGetConfig("one.auth.token.refresh", false);
+  const keepAlive = Number(useGetConfig("one.auth.token.keepAlive", 60000));
 
   // Grant access to the App
   // (boot time Access Token lifecycle)

@@ -3,6 +3,7 @@ import { Layout } from "./containers/Layout";
 
 export const serviceLayout = ({ registerTargets }) => {
   registerTargets({
+    ONE_LAYOUT_TITLE: "one/layout/title",
     ONE_LAYOUT_ROUTE: "one/layout/route"
   });
 
