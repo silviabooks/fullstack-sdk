@@ -13,7 +13,9 @@ forrest
       one: {
         auth: {
           token: {
-            refresh: true
+            verify: true,
+            refresh: false,
+            keepAlive: 0
           }
         },
         layout: {

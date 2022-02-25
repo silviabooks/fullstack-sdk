@@ -10,8 +10,6 @@ import { LayoutHeader } from "../components/LayoutHeader";
 export const Layout = () => {
   const { isEmbed, title, routes } = useLayout();
 
-  console.log("@@", isEmbed);
-
   // Embed mode - Pure routing
   if (isEmbed) {
     return (
