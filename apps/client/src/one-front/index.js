@@ -7,6 +7,7 @@ import { serviceLayout } from "./service-layout";
 
 // Export top level APIs:
 export { useAuth } from "./service-auth";
+export { useLayout } from "./service-layout";
 
 // Export the list of services:
 const services = [reactRoot, reactMUI, reactRouter, serviceAuth, serviceLayout];

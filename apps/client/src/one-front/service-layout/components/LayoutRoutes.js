@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { ErrorBoundary } from "../../components/ErrorBoundary";
 
 export const LayoutRoutes = ({ items = [] }) => {
   if (!items.length) {
@@ -20,10 +21,12 @@ export const LayoutRoutes = ({ items = [] }) => {
   }
 
   return (
-    <Routes>
-      {items.map((routeConfig, idx) => (
-        <Route key={idx} {...routeConfig} />
-      ))}
-    </Routes>
+    <ErrorBoundary>
+      <Routes>
+        {items.map((routeConfig, idx) => (
+          <Route key={idx} {...routeConfig} />
+        ))}
+      </Routes>
+    </ErrorBoundary>
   );
 };

@@ -1,4 +1,5 @@
 import { Dashboard } from "./Dashboard";
+import { Page } from "./Page";
 
 export const dashboard = () => [
   {
@@ -6,6 +7,13 @@ export const dashboard = () => [
     handler: {
       path: "/",
       element: <Dashboard />
+    }
+  },
+  {
+    target: "$ONE_LAYOUT_ROUTE",
+    handler: {
+      path: "/page/:id",
+      element: <Page />
     }
   }
 ];

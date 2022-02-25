@@ -9,5 +9,5 @@ export const onInitService = ({ createExtension, getConfig, setContext }) => {
     .map((_) => _[0]);
 
   setContext("one.layout.title", layoutTitle);
-  setContext("one.layout.route.items", layoutRoutes);
+  setContext("one.layout.routes", layoutRoutes);
 };
